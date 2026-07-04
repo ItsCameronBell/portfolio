@@ -8,16 +8,20 @@ interface Props {
   lang: NonNullable<CodeProps['lang']>;
   code: string;
   filename?: string;
-  theme?: CodeProps['theme'];
 }
 
-const { lang, code, filename, theme = 'github-dark' } = Astro.props;
+const { lang, code, filename } = Astro.props;
 ---
 
 <figure class="cb">
   {filename && <figcaption class="cb-header">{filename}</figcaption>}
   <div class="cb-body">
-    <Code code={code} lang={lang} theme={theme} />
+    <Code
+      code={code}
+      lang={lang}
+      themes={{ light: 'github-light', dark: 'github-dark' }}
+      defaultColor={false}
+    />
   </div>
 </figure>
 
@@ -32,10 +36,10 @@ const { lang, code, filename, theme = 'github-dark' } = Astro.props;
   .cb-header {
     font-family: var(--mono);
     font-size: 0.7rem;
-    color: #888;
-    background: #161616;
+    color: var(--muted);
+    background: var(--surface);
     padding: 0.5rem 1.25rem;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid var(--border);
   }
 
   .cb-body :global(pre.astro-code) {
@@ -44,5 +48,20 @@ const { lang, code, filename, theme = 'github-dark' } = Astro.props;
     padding: 1.25rem 1.5rem !important;
     font-size: 0.82rem;
     line-height: 1.65;
+    background-color: var(--shiki-light-bg) !important;
+    color: var(--shiki-light) !important;
+  }
+
+  :global([data-theme="dark"]) .cb-body :global(pre.astro-code) {
+    background-color: var(--shiki-dark-bg) !important;
+    color: var(--shiki-dark) !important;
+  }
+
+  .cb-body :global(pre.astro-code span) {
+    color: var(--shiki-light) !important;
+  }
+
+  :global([data-theme="dark"]) .cb-body :global(pre.astro-code span) {
+    color: var(--shiki-dark) !important;
   }
 </style>
