@@ -3,8 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://itscameronbell.github.io',
-  base: "/portfolio",
+  site: "https://cameronbell.dev",
   integrations: [mdx(), sitemap()],
   markdown: {
     shikiConfig: {
