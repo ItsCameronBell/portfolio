@@ -27,7 +27,6 @@ interface WebsiteRef {
   year: number | string;
   title: string;
   url: string;
-  accessed: string;
 }
 
 interface ChapterRef {
@@ -99,8 +98,7 @@ const sorted = [...refs].sort((a, b) =>
             {formatAuthors(ref.authors)} ({ref.year}){' '}
             <em>{ref.title}</em>.
             {' '}Available at:{' '}
-            <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.url}</a>
-            {' '}(Accessed: {ref.accessed}).
+            <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.url}</a>.
           </>
         )}
 
