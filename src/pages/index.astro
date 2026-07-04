@@ -1,11 +1,638 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { getSortedPosts, formatMonthYear } from '../lib/posts';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const posts = await getSortedPosts();
 ---
 
 <Layout>
-	<Welcome />
+  <div class="site">
+
+    <!-- ── Sidebar ──── -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h1 class="brand-name">Cameron Bell</h1>
+        <p class="brand-role">Software Engineer</p>
+      </div>
+
+      <p class="sidebar-about">
+        I build backend systems and tools for developers.
+        Mostly Go, more Postgres than I originally planned for,
+        and the occasional Rust detour.
+      </p>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="sidebar-links">
+        <a href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="mailto:me@cameronbell.email">email</a>
+        <a href="/rss.xml">rss</a>
+      </div>
+
+      <div class="sidebar-copyright">© 2026 Cameron Bell</div>
+      <p class="sidebar-built">Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> and <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a>. Writing is my own.</p>
+    </aside>
+
+    <!-- ── Main ──── -->
+    <main class="main">
+
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" id="tab-btn-work" data-tab="work" role="tab" aria-selected="true" aria-controls="tab-work">work</button>
+        <button class="tab-btn" id="tab-btn-cv" data-tab="cv" role="tab" aria-selected="false" aria-controls="tab-cv">cv</button>
+      </div>
+
+      <!-- Tab: work -->
+      <div class="tab-panel active" id="tab-work" role="tabpanel" aria-labelledby="tab-btn-work">
+
+        <section>
+          <h2 class="section-head">Projects</h2>
+          <div class="project-list">
+
+            <a class="project-item" href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">
+              <div class="project-name">boltq</div>
+              <p class="project-desc">A job queue built on Postgres advisory locks. No Redis, no extra infra — just your existing database and a few hundred lines of Go.</p>
+              <div class="project-stack"><span>Go</span><span>PostgreSQL</span><span>OSS</span></div>
+            </a>
+
+            <a class="project-item" href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">
+              <div class="project-name">driftlog</div>
+              <p class="project-desc">Structured diff logging for schema migrations. Catches the cases where your migration ran fine in staging but quietly broke something in prod.</p>
+              <div class="project-stack"><span>Go</span><span>CLI</span></div>
+            </a>
+
+            <a class="project-item" href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">
+              <div class="project-name">hue</div>
+              <p class="project-desc">Terminal color token generator. Define a palette once, export to CSS variables, Tailwind config, or Figma tokens.</p>
+              <div class="project-stack"><span>TypeScript</span><span>OSS</span></div>
+            </a>
+
+          </div>
+        </section>
+
+        <section>
+          <h2 class="section-head">Writing</h2>
+          <div class="writing-list">
+            {posts.map((post) => (
+              <a class="writing-item" href={`/posts/${post.id}`}>
+                <span class="writing-date">{formatMonthYear(post.data.date)}</span>
+                <div>
+                  <div class="writing-title">{post.data.title}</div>
+                  {post.data.description && (
+                    <div class="writing-desc">{post.data.description}</div>
+                  )}
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="writing-tags">
+                      {post.data.tags.map((tag: string) => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Tab: cv -->
+      <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv">
+
+        <section>
+          <h2 class="section-head">Experience</h2>
+          <div class="cv-list">
+
+            <!-- Multiple roles at the same company: each gets a sub-date -->
+            <div class="cv-item">
+              <span class="cv-date">2021–</span>
+              <div class="cv-body">
+                <a class="cv-org" href="#" target="_blank" rel="noopener noreferrer">[Company]</a>
+                <div class="cv-roles">
+                  <div class="cv-role-entry">
+                    <span class="cv-role-date">2023–</span>
+                    <span class="cv-role">Senior Software Engineer</span>
+                  </div>
+                  <div class="cv-role-entry">
+                    <span class="cv-role-date">2021–23</span>
+                    <span class="cv-role">Software Engineer</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Single role: no sub-date needed, tenure covers it -->
+            <div class="cv-item">
+              <span class="cv-date">2019–21</span>
+              <div class="cv-body">
+                <a class="cv-org" href="#" target="_blank" rel="noopener noreferrer">[Previous Company]</a>
+                <div class="cv-roles">
+                  <div class="cv-role-entry">
+                    <span class="cv-role">Junior Software Engineer</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section>
+          <h2 class="section-head">Education</h2>
+          <div class="cv-list">
+
+            <div class="cv-item">
+              <span class="cv-date">2015–19</span>
+              <div class="cv-body">
+                <a class="cv-org" href="#" target="_blank" rel="noopener noreferrer">[University]</a>
+                <div class="cv-roles">
+                  <div class="cv-role-entry">
+                    <span class="cv-role">BSc Computer Science</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section>
+          <h2 class="section-head">Compensation</h2>
+          <div class="comp-scroll">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Base</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">2023–</td>
+                <td>[Company]</td>
+                <td>Senior Software Engineer</td>
+                <td class="mono salary">£95,000</td>
+              </tr>
+              <tr>
+                <td class="mono">2021–23</td>
+                <td>[Company]</td>
+                <td>Software Engineer</td>
+                <td class="mono salary">£72,000</td>
+              </tr>
+              <tr>
+                <td class="mono">2019–21</td>
+                <td>[Previous Company]</td>
+                <td>Junior Software Engineer</td>
+                <td class="mono salary">£48,000</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <p class="comp-note">Base salary only. I share this because I think salary transparency is worth something.</p>
+        </section>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const btns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
+    const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
+
+    function activate(tabId: string) {
+      btns.forEach((b) => {
+        const isTarget = b.dataset['tab'] === tabId;
+        b.classList.toggle('active', isTarget);
+        b.setAttribute('aria-selected', String(isTarget));
+      });
+      panels.forEach((p) => p.classList.remove('active'));
+      document.getElementById(`tab-${tabId}`)?.classList.add('active');
+    }
+
+    // Restore from hash on load
+    const initial = window.location.hash.slice(1);
+    const validTabs = Array.from(btns).map((b) => b.dataset['tab']);
+    if (initial && validTabs.includes(initial)) {
+      activate(initial);
+    }
+
+    btns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset['tab'];
+        if (tab) {
+          activate(tab);
+          history.replaceState(null, '', `#${tab}`);
+        }
+      });
+    });
+  </script>
 </Layout>
+
+<style>
+  /* ── Layout ──── */
+  .site {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 12.5rem 1fr;
+    gap: 0 3.5rem;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ──── */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 3rem 2rem 3rem 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .brand {
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .brand-name {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .brand-role {
+    display: block;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.2;
+  }
+
+  .sidebar-about {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-spacer { flex: 1; }
+
+  .sidebar-links {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .sidebar-links a {
+    color: var(--faint);
+    transition: color 0.1s;
+  }
+
+  .sidebar-links a:hover { color: var(--text); }
+
+  .sidebar-links a + a::before {
+    content: ' · ';
+    color: var(--border);
+  }
+
+  .sidebar-copyright {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+  }
+
+  .sidebar-built {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--border);
+    line-height: 1.5;
+    margin-top: 0.75rem;
+  }
+
+  .sidebar-built a {
+    color: var(--faint);
+    transition: color 0.1s;
+  }
+
+  .sidebar-built a:hover { color: var(--text); }
+
+/* ── Main ──── */
+  .main { padding: 3rem 0 4rem; }
+
+  section + section { margin-top: 3rem; }
+
+  /* ── Section headings ──── */
+  .section-head {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  /* ── Projects ──── */
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .project-item { display: block; }
+
+  .project-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    transition: color 0.1s;
+  }
+
+  .project-item:hover .project-name { color: var(--accent); }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 0.45rem;
+    max-width: 38rem;
+  }
+
+  .project-stack {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+  }
+
+  .project-stack span + span::before { content: ' · '; }
+
+  /* ── Writing ──── */
+  .writing-list { display: flex; flex-direction: column; }
+
+  .writing-item {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0 1.25rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .writing-item:first-child { border-top: 1px solid var(--border); }
+
+  .writing-item:hover .writing-title { color: var(--accent); }
+
+  .writing-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+    padding-top: 0.2rem;
+    line-height: 1.4;
+  }
+
+  .writing-title {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
+    transition: color 0.1s;
+  }
+
+  .writing-desc {
+    font-size: 0.825rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .writing-tags {
+    margin-top: 0.2rem;
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+  }
+
+  .tag + .tag { margin-left: 0.35rem; }
+  .tag::before { content: '#'; }
+
+  /* ── CV timeline ────
+     Rail runs through the 1.25rem gap between the date column (5.5rem)
+     and the content column, so text stays aligned with the writing list. */
+  .cv-list {
+    display: flex;
+    flex-direction: column;
+    --rail-x: 6.125rem;
+  }
+
+  .cv-item {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0 1.25rem;
+    padding: 0 0 1.35rem;
+    position: relative;
+  }
+
+  .cv-item:last-child { padding-bottom: 0; }
+
+  .cv-item::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--rail-x) - 0.5px);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .cv-item:first-child::before { top: 0.45rem; }
+  .cv-item:last-child::before { bottom: auto; height: 0.45rem; }
+  .cv-item:first-child:last-child::before { display: none; }
+
+  .cv-item::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--rail-x) - 3px);
+    top: 0.4rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--faint);
+    background: var(--bg);
+  }
+
+  .cv-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+    padding-top: 0.15rem;
+    line-height: 1.4;
+  }
+
+  /* Company is the anchor on the timeline */
+  .cv-org {
+    display: inline-block;
+    font-size: 0.875rem;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 0.3rem;
+  }
+
+  .cv-org:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .cv-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  /* flex so sub-date + role sit on one line; no sub-date = role is flush-left */
+  .cv-role-entry {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+
+  .cv-role-date {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+    flex-shrink: 0;
+    min-width: 3.75rem;
+  }
+
+  .cv-role {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── Compensation table ──── */
+  .comp-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .comp-table th {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    font-weight: 400;
+    color: var(--faint);
+    text-align: left;
+    padding: 0 1rem 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-table td {
+    padding: 0.55rem 1rem 0.55rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .comp-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .comp-table .mono {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+
+  .comp-table .salary {
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .comp-note {
+    margin-top: 0.85rem;
+    font-size: 0.78rem;
+    color: var(--faint);
+    font-style: italic;
+  }
+
+  /* ── Tabs ──── */
+  .tab-bar {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .tab-btn {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--faint);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+
+  .tab-btn:hover { color: var(--muted); }
+
+  .tab-btn.active {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Responsive ──── */
+  @media (max-width: 640px) {
+    .site { grid-template-columns: 1fr; }
+
+    .sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 0 1.5rem;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 1.5rem 2.5rem;
+      overflow: visible;
+    }
+
+    .brand { margin-bottom: 0; }
+
+    .main { padding: 2rem 0 4rem; }
+
+    .writing-item {
+      grid-template-columns: 1fr;
+      gap: 0.1rem 0;
+    }
+
+    .writing-date { padding-top: 0; }
+
+    .cv-item {
+      grid-template-columns: 1fr;
+      gap: 0.1rem 0;
+      padding-bottom: 1.1rem;
+    }
+
+    .cv-item::before,
+    .cv-item::after { display: none; }
+
+    .cv-date { padding-top: 0; }
+
+    .cv-role-entry { flex-wrap: wrap; gap: 0.35rem; }
+  }
+</style>
