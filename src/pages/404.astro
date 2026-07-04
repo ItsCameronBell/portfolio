@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 — Cameron Bell" description="Page not found.">
+  <main class="wrap">
+    <h1 class="code">404</h1>
+    <p class="msg">Nothing here.</p>
+    <a class="home" href="/">← back home</a>
+  </main>
+</Layout>
+
+<style>
+  .wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .code {
+    font-family: var(--mono);
+    font-size: 6rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .msg {
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 0.75rem;
+  }
+
+  .home {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    margin-top: 2.5rem;
+    transition: color 0.1s;
+  }
+
+  .home:hover {
+    color: var(--text);
+  }
+</style>
