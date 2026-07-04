@@ -3,6 +3,34 @@ import Layout from '../layouts/Layout.astro';
 import { getSortedPosts, formatMonthYear } from '../lib/posts';
 
 const posts = await getSortedPosts();
+
+interface Project {
+  name: string;
+  url: string;
+  desc: string;
+  stack: string[];
+}
+
+const projects: Project[] = [
+  {
+    name: 'boltq',
+    url: 'https://github.com/cameronbell',
+    desc: 'A job queue built on Postgres advisory locks. No Redis, no extra infra — just your existing database and a few hundred lines of Go.',
+    stack: ['Go', 'PostgreSQL', 'OSS'],
+  },
+  {
+    name: 'driftlog',
+    url: 'https://github.com/cameronbell',
+    desc: 'Structured diff logging for schema migrations. Catches the cases where your migration ran fine in staging but quietly broke something in prod.',
+    stack: ['Go', 'CLI'],
+  },
+  {
+    name: 'hue',
+    url: 'https://github.com/cameronbell',
+    desc: 'Terminal color token generator. Define a palette once, export to CSS variables, Tailwind config, or Figma tokens.',
+    stack: ['TypeScript', 'OSS'],
+  },
+];
 ---
 
 <Layout>
@@ -46,51 +74,49 @@ const posts = await getSortedPosts();
 
         <section>
           <h2 class="section-head">Projects</h2>
-          <div class="project-list">
-
-            <a class="project-item" href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">
-              <div class="project-name">boltq</div>
-              <p class="project-desc">A job queue built on Postgres advisory locks. No Redis, no extra infra — just your existing database and a few hundred lines of Go.</p>
-              <div class="project-stack"><span>Go</span><span>PostgreSQL</span><span>OSS</span></div>
-            </a>
-
-            <a class="project-item" href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">
-              <div class="project-name">driftlog</div>
-              <p class="project-desc">Structured diff logging for schema migrations. Catches the cases where your migration ran fine in staging but quietly broke something in prod.</p>
-              <div class="project-stack"><span>Go</span><span>CLI</span></div>
-            </a>
-
-            <a class="project-item" href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">
-              <div class="project-name">hue</div>
-              <p class="project-desc">Terminal color token generator. Define a palette once, export to CSS variables, Tailwind config, or Figma tokens.</p>
-              <div class="project-stack"><span>TypeScript</span><span>OSS</span></div>
-            </a>
-
-          </div>
+          {projects.length === 0 ? (
+            <p class="empty">Nothing here yet.</p>
+          ) : (
+            <div class="project-list">
+              {projects.map((p) => (
+                <a class="project-item" href={p.url} target="_blank" rel="noopener noreferrer">
+                  <div class="project-name">{p.name}</div>
+                  <p class="project-desc">{p.desc}</p>
+                  <div class="project-stack">
+                    {p.stack.map((s) => <span>{s}</span>)}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </section>
 
         <section>
           <h2 class="section-head">Writing</h2>
-          <div class="writing-list">
-            {posts.map((post) => (
-              <a class="writing-item" href={`/posts/${post.id}`}>
-                <span class="writing-date">{formatMonthYear(post.data.date)}</span>
-                <div>
-                  <div class="writing-title">{post.data.title}</div>
-                  {post.data.description && (
-                    <div class="writing-desc">{post.data.description}</div>
-                  )}
-                  {post.data.tags && post.data.tags.length > 0 && (
-                    <div class="writing-tags">
-                      {post.data.tags.map((tag: string) => (
-                        <span class="tag">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </a>
-            ))}
-          </div>
+          {posts.length === 0 ? (
+            <p class="empty">Nothing here yet.</p>
+          ) : (
+            <div class="writing-list">
+              {posts.map((post) => (
+                <a class="writing-item" href={`/posts/${post.id}`}>
+                  <span class="writing-date">{formatMonthYear(post.data.date)}</span>
+                  <div>
+                    <div class="writing-title">{post.data.title}</div>
+                    {post.data.description && (
+                      <div class="writing-desc">{post.data.description}</div>
+                    )}
+                    {post.data.tags && post.data.tags.length > 0 && (
+                      <div class="writing-tags">
+                        {post.data.tags.map((tag: string) => (
+                          <span class="tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </section>
 
       </div>
@@ -338,6 +364,13 @@ const posts = await getSortedPosts();
     font-weight: 400;
     color: var(--muted);
     margin-bottom: 1rem;
+  }
+
+  /* ── Empty state ──── */
+  .empty {
+    font-size: 0.875rem;
+    color: var(--faint);
+    font-style: italic;
   }
 
   /* ── Projects ──── */
