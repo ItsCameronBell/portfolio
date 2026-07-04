@@ -6,6 +6,7 @@ tags: ["postgres", "go"]
 ---
 
 import CodeBlock from '../../components/CodeBlock.astro';
+import References from '../../components/References.astro';
 
 The common advice is to use Redis for a job queue. Redis is fast, has built-in list operations, and there are mature libraries on every stack. It's fine advice. But it adds a dependency — another thing to run, monitor, back up, and reason about in production.
 
@@ -88,3 +89,30 @@ Throughput above a few thousand jobs per second starts to feel the limits of row
 Delayed scheduling is also worth thinking about. The `run_at` column handles it, but you need a separate polling loop to wake workers when delayed jobs become ready. Advisory locks or `LISTEN/NOTIFY` can make this more efficient, but it's more code than the basic approach.
 
 For most services — background email, webhook delivery, async processing — none of that matters. The queue is not the bottleneck. And having one fewer dependency in production is worth something concrete: simpler infrastructure, fewer failure modes, one less thing to wake up for.
+
+<References refs={[
+  {
+    type: 'article',
+    authors: ['Brandur, L.'],
+    year: 2021,
+    title: 'Transactionally staged job drains in Postgres',
+    journal: 'Brandur.org',
+    url: 'https://brandur.org/job-drain',
+  },
+  {
+    type: 'website',
+    authors: ['PostgreSQL Global Development Group'],
+    year: 2024,
+    title: 'Explicit Locking — PostgreSQL 16 Documentation',
+    url: 'https://www.postgresql.org/docs/current/explicit-locking.html',
+    accessed: '3 July 2026',
+  },
+  {
+    type: 'website',
+    authors: ['PostgreSQL Global Development Group'],
+    year: 2024,
+    title: 'SKIP LOCKED — SELECT Documentation',
+    url: 'https://www.postgresql.org/docs/current/sql-select.html',
+    accessed: '3 July 2026',
+  },
+]} />

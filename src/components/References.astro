@@ -1,0 +1,169 @@
+---
+interface BookRef {
+  type: 'book';
+  authors: string[];
+  year: number;
+  title: string;
+  edition?: string;
+  place: string;
+  publisher: string;
+}
+
+interface ArticleRef {
+  type: 'article';
+  authors: string[];
+  year: number;
+  title: string;
+  journal: string;
+  volume?: number | string;
+  issue?: number | string;
+  pages?: string;
+  doi?: string;
+}
+
+interface WebsiteRef {
+  type: 'website';
+  authors: string[];
+  year: number | string;
+  title: string;
+  url: string;
+  accessed: string;
+}
+
+interface ChapterRef {
+  type: 'chapter';
+  authors: string[];
+  year: number;
+  chapter: string;
+  editors?: string[];
+  book: string;
+  place: string;
+  publisher: string;
+  pages?: string;
+}
+
+type Ref = BookRef | ArticleRef | WebsiteRef | ChapterRef;
+
+interface Props {
+  refs: Ref[];
+}
+
+const { refs } = Astro.props;
+
+function formatAuthors(authors: string[]): string {
+  if (authors.length === 0) return '';
+  if (authors.length === 1) return authors[0]!;
+  if (authors.length === 2) return `${authors[0]} and ${authors[1]}`;
+  return authors.slice(0, -1).join(', ') + ' and ' + authors[authors.length - 1];
+}
+
+function formatEditors(editors: string[]): string {
+  const names = formatAuthors(editors);
+  return `${names} (ed${editors.length > 1 ? 's' : ''}.)`;
+}
+
+// Sort alphabetically by first author surname
+const sorted = [...refs].sort((a, b) =>
+  (a.authors[0] ?? '').localeCompare(b.authors[0] ?? '')
+);
+---
+
+<section class="refs">
+  <h2 class="refs-head">References</h2>
+  <ul class="refs-list">
+    {sorted.map((ref) => (
+      <li class="ref-entry">
+        {ref.type === 'book' && (
+          <>
+            {formatAuthors(ref.authors)} ({ref.year}){' '}
+            <em>{ref.title}</em>.
+            {ref.edition && <> {ref.edition} edn.</>}
+            {' '}{ref.place}: {ref.publisher}.
+          </>
+        )}
+
+        {ref.type === 'article' && (
+          <>
+            {formatAuthors(ref.authors)} ({ref.year}){' '}
+            '{ref.title}',{' '}
+            <em>{ref.journal}</em>
+            {(ref.volume !== undefined) && <>, {ref.volume}</>}
+            {(ref.issue !== undefined) && <>({ref.issue})</>}
+            {ref.pages && <>, pp.{ref.pages}</>}.
+            {ref.doi && <> doi:<a href={`https://doi.org/${ref.doi}`} target="_blank" rel="noopener noreferrer">{ref.doi}</a>.</>}
+          </>
+        )}
+
+        {ref.type === 'website' && (
+          <>
+            {formatAuthors(ref.authors)} ({ref.year}){' '}
+            <em>{ref.title}</em>.
+            {' '}Available at:{' '}
+            <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.url}</a>
+            {' '}(Accessed: {ref.accessed}).
+          </>
+        )}
+
+        {ref.type === 'chapter' && (
+          <>
+            {formatAuthors(ref.authors)} ({ref.year}){' '}
+            '{ref.chapter}',
+            {ref.editors && <> in {formatEditors(ref.editors)}</>}
+            {' '}<em>{ref.book}</em>.
+            {' '}{ref.place}: {ref.publisher}
+            {ref.pages && <>, pp.{ref.pages}</>}.
+          </>
+        )}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .refs {
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .refs-head {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .refs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ref-entry {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--muted);
+    /* Hanging indent for wrapped lines */
+    padding-left: 1.5rem;
+    text-indent: -1.5rem;
+  }
+
+  .ref-entry em {
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .ref-entry a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    word-break: break-all;
+  }
+
+  .ref-entry a:hover {
+    opacity: 0.8;
+  }
+</style>
