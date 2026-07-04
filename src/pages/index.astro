@@ -55,6 +55,7 @@ const projects: Project[] = [
         <a href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">github</a>
         <a href="mailto:me@cameronbell.email">email</a>
         <a href="/rss.xml">rss</a>
+        <a href="/cv.pdf" download="cameron-bell-cv.pdf">cv</a>
       </div>
 
       <div class="sidebar-copyright">© 2026 Cameron Bell</div>
@@ -123,6 +124,8 @@ const projects: Project[] = [
 
       <!-- Tab: cv -->
       <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv">
+
+        <a class="cv-download" href="/cv.pdf" download="cameron-bell-cv.pdf">↓ download cv</a>
 
         <section>
           <h2 class="section-head">Experience</h2>
@@ -364,6 +367,24 @@ const projects: Project[] = [
     font-weight: 400;
     color: var(--muted);
     margin-bottom: 1rem;
+  }
+
+  /* ── CV download ──── */
+  .cv-download {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.75rem;
+    border-radius: 3px;
+    margin-bottom: 2rem;
+    transition: color 0.1s, border-color 0.1s;
+  }
+
+  .cv-download:hover {
+    color: var(--text);
+    border-color: var(--muted);
   }
 
   /* ── Empty state ──── */
