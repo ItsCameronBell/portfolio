@@ -1,0 +1,145 @@
+---
+import Layout from './Layout.astro';
+import { formatFullDate } from '../lib/posts';
+
+interface Props {
+  title: string;
+  date: Date;
+  description?: string;
+}
+
+const { title, date, description } = Astro.props;
+const formattedDate = formatFullDate(date);
+---
+
+<Layout title={`${title} — Cameron Bell`} description={description} ogType="article">
+  <div class="post-wrap">
+    <nav class="post-nav">
+      <a href="/">← Cameron Bell</a>
+    </nav>
+    <header class="post-head">
+      <h1 class="post-title">{title}</h1>
+      <time class="post-date" datetime={date.toISOString()}>{formattedDate}</time>
+    </header>
+    <article class="post-body">
+      <slot />
+    </article>
+  </div>
+</Layout>
+
+<style is:global>
+  .post-wrap {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    padding: 2.5rem 0 2rem;
+  }
+
+  .post-nav a:hover { color: var(--text); }
+
+  .post-head {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+
+  .post-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .post-date {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+
+  /* Article prose */
+  .post-body {
+    line-height: 1.75;
+  }
+
+  .post-body p {
+    margin-bottom: 1.4rem;
+  }
+
+  .post-body h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 2.5rem 0 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .post-body h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 2rem 0 0.6rem;
+  }
+
+  .post-body a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .post-body a:hover { opacity: 0.8; }
+
+  .post-body ul,
+  .post-body ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .post-body li {
+    margin-bottom: 0.35rem;
+  }
+
+  .post-body blockquote {
+    border-left: 2px solid var(--border);
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+    color: var(--muted);
+  }
+
+  .post-body hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  .post-body :not(pre) > code {
+    font-family: var(--mono);
+    font-size: 0.875em;
+    background: var(--surface);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+
+  /* Code blocks from markdown fences */
+  .post-body pre.astro-code {
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    margin: 1.75rem 0;
+    padding: 1.25rem 1.5rem !important;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    font-family: var(--mono);
+  }
+
+  .post-body figure.cb {
+    margin: 1.75rem 0;
+  }
+</style>

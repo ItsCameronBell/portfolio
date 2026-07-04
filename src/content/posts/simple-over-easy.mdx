@@ -1,0 +1,45 @@
+---
+title: "Simple over easy"
+date: 2026-06-12
+description: "On the difference between a tool that's easy to pick up and one that's easy to live with."
+tags: ["craft"]
+---
+
+There's a version of good tooling that you understand in ten minutes and regret in six months. The API is clean. The examples work on the first try. You ship something. Then the requirements change, or you need to do something slightly off the happy path, and the abstraction starts fighting you.
+
+I keep choosing the slower option. Go over a framework for backend services. Raw SQL over an ORM. Boring UNIX pipes over elegant streaming libraries. Each choice costs me a morning of setup and pays back across months of not fighting the tool.
+
+## The distinction
+
+Rich Hickey draws this line clearly: *easy* means near to hand, familiar, low friction to start. *Simple* means not interleaved, not entangled — one thing does one thing. These are different axes. A tool can be simple and hard (learning Vim), or easy and complex (most ORMs).
+
+The problem is that easy *feels* like simple at the start. When you're picking a tool, you're solving the onboarding problem, not the maintenance problem. And the onboarding problem is always smaller.
+
+## Where it shows up
+
+The ORM example is tired but accurate. You start writing:
+
+```go
+db.Where("status = ?", "active").Find(&users)
+```
+
+And it works. It feels like less code than SQL. Six months later you're reading the ORM's source to figure out why it's generating a subquery instead of a join, and the "less code" calculation no longer holds.
+
+The SQL version:
+
+```sql
+SELECT id, name, email
+FROM users
+WHERE status = 'active'
+ORDER BY created_at DESC;
+```
+
+Is longer at first glance. But it says exactly what it does. There's no layer between your intent and the database. When something goes wrong, you read the query — not the ORM's internals, not the generated SQL, the query.
+
+## The real cost
+
+The thing I didn't account for early in my career: debugging time isn't just about fixing the bug. It's about forming an accurate mental model of what the system is doing. Every abstraction layer that hides behavior is a layer you have to peel back when something goes wrong.
+
+Simple tools give you the behavior directly. Easy tools hide it until you need it, then charge you for the ignorance all at once.
+
+I'm not arguing for maximalist complexity — there's a version of this thinking that leads to writing your own HTTP server. The useful version is: when you're choosing between two tools, weight their failure modes more than their happy paths. The happy path is the advertisement. The failure modes are the contract.

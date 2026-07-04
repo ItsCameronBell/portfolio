@@ -1,0 +1,90 @@
+---
+title: "Postgres as a job queue, actually"
+date: 2026-04-03
+description: "Advisory locks and a single table. It handles more than you'd think and removes a whole dependency from your stack."
+tags: ["postgres", "go"]
+---
+
+import CodeBlock from '../../components/CodeBlock.astro';
+
+The common advice is to use Redis for a job queue. Redis is fast, has built-in list operations, and there are mature libraries on every stack. It's fine advice. But it adds a dependency — another thing to run, monitor, back up, and reason about in production.
+
+If you're already running Postgres, you can skip Redis entirely. Postgres has everything you need: durable storage, transactions, and advisory locks that let you claim a job atomically without polling for it.
+
+## The table
+
+One table. Keep it small.
+
+```sql
+CREATE TABLE jobs (
+  id         BIGSERIAL PRIMARY KEY,
+  queue      TEXT        NOT NULL DEFAULT 'default',
+  payload    JSONB       NOT NULL,
+  status     TEXT        NOT NULL DEFAULT 'pending',
+  run_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  attempts   INT         NOT NULL DEFAULT 0
+);
+
+CREATE INDEX idx_jobs_pending ON jobs (queue, run_at)
+  WHERE status = 'pending';
+```
+
+The partial index on `(queue, run_at) WHERE status = 'pending'` keeps the index small as jobs complete, and makes the claim query fast even with millions of historical rows.
+
+## Claiming a job
+
+The trick is `SKIP LOCKED`. Without it, multiple workers would contend on the same row and block each other. With it, each worker skips rows that another worker has locked, so you get parallelism without coordination overhead.
+
+```sql
+WITH claimed AS (
+  SELECT id FROM jobs
+  WHERE status = 'pending'
+    AND queue = $1
+    AND run_at <= now()
+  ORDER BY run_at ASC
+  LIMIT 1
+  FOR UPDATE SKIP LOCKED
+)
+UPDATE jobs
+SET status = 'running', attempts = attempts + 1
+WHERE id = (SELECT id FROM claimed)
+RETURNING *;
+```
+
+Run this inside a transaction. The lock is held for the duration of the transaction — when the job completes, you commit (updating status to `done`). If the worker crashes, the transaction rolls back and the job returns to `pending`.
+
+## In Go
+
+<CodeBlock lang="go" filename="queue/worker.go" code={`func (w *Worker) claim(ctx context.Context, queue string) (*Job, error) {
+	tx, err := w.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var job Job
+	err = tx.QueryRowContext(ctx, claimQuery, queue).Scan(
+		&job.ID, &job.Queue, &job.Payload, &job.Attempts,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		tx.Rollback()
+		return nil, nil
+	}
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	job.tx = tx
+	return &job, nil
+}`} />
+
+The job holds a reference to the open transaction. When the handler finishes, it calls `job.Done()` or `job.Fail(err)`, which commits or rolls back.
+
+## What it doesn't do well
+
+Throughput above a few thousand jobs per second starts to feel the limits of row locking. If you're enqueueing at that rate, Redis is the right call.
+
+Delayed scheduling is also worth thinking about. The `run_at` column handles it, but you need a separate polling loop to wake workers when delayed jobs become ready. Advisory locks or `LISTEN/NOTIFY` can make this more efficient, but it's more code than the basic approach.
+
+For most services — background email, webhook delivery, async processing — none of that matters. The queue is not the bottleneck. And having one fewer dependency in production is worth something concrete: simpler infrastructure, fewer failure modes, one less thing to wake up for.

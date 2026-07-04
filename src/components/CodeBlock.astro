@@ -1,0 +1,48 @@
+---
+import { Code } from 'astro:components';
+import type { ComponentProps } from 'astro/types';
+
+type CodeProps = ComponentProps<typeof Code>;
+
+interface Props {
+  lang: NonNullable<CodeProps['lang']>;
+  code: string;
+  filename?: string;
+  theme?: CodeProps['theme'];
+}
+
+const { lang, code, filename, theme = 'github-dark' } = Astro.props;
+---
+
+<figure class="cb">
+  {filename && <figcaption class="cb-header">{filename}</figcaption>}
+  <div class="cb-body">
+    <Code code={code} lang={lang} theme={theme} />
+  </div>
+</figure>
+
+<style>
+  .cb {
+    margin: 1.75rem 0;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .cb-header {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: #888;
+    background: #161616;
+    padding: 0.5rem 1.25rem;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .cb-body :global(pre.astro-code) {
+    margin: 0 !important;
+    border-radius: 0 !important;
+    padding: 1.25rem 1.5rem !important;
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+</style>
