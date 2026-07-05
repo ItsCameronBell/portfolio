@@ -741,18 +741,43 @@ const projects: Project[] = [
 
   /* ── Responsive ──── */
   @media (max-width: 640px) {
-    .site { grid-template-columns: 1fr; }
-
-    .sidebar {
-      position: static;
-      height: auto;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      padding: 2rem 0 1.5rem;
-      overflow: visible;
+    .site {
+      display: flex;
+      flex-direction: column;
     }
 
-    .main { padding: 2rem 0 4rem; }
+    /* Dissolve the sidebar box so its children join the page's flex column;
+       this lets the disclaimer + copyright be ordered below the main content
+       and pinned to the very bottom of the page. */
+    .sidebar { display: contents; }
+    .sidebar-spacer { display: none; }
+
+    .brand { padding-top: 2rem; }
+
+    .sidebar-links {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 0;
+    }
+
+    .main {
+      order: 1;
+      padding: 1.5rem 0 3rem;
+    }
+
+    .sidebar-built {
+      order: 2;
+      margin-top: auto;
+      padding-top: 1.5rem;
+    }
+
+    .sidebar-copyright {
+      order: 3;
+      padding-bottom: 2rem;
+    }
 
     .writing-item {
       grid-template-columns: 1fr;
