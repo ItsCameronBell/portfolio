@@ -3,7 +3,7 @@
 // Rendered once by Layout.astro; reads and writes data-theme on <html>.
 ---
 
-<button class="theme-toggle" aria-label="Toggle theme">◐</button>
+<button class="theme-toggle" aria-label="Toggle theme" transition:persist>◐</button>
 
 <script>
   const THEMES = ['light', 'dark', 'paper'] as const;

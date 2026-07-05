@@ -227,34 +227,83 @@ const projects: Project[] = [
   </div>
 
   <script>
-    const btns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
-    const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
+    // Re-run on every view-transition navigation (and initial load), since
+    // the homepage DOM — and these buttons — get swapped in fresh each time.
+    function initTabs() {
+      const btns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
+      const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
+      if (btns.length === 0) return;
 
-    function activate(tabId: string) {
-      btns.forEach((b) => {
-        const isTarget = b.dataset['tab'] === tabId;
-        b.classList.toggle('active', isTarget);
-        b.setAttribute('aria-selected', String(isTarget));
+      function activate(tabId: string) {
+        btns.forEach((b) => {
+          const isTarget = b.dataset['tab'] === tabId;
+          b.classList.toggle('active', isTarget);
+          b.setAttribute('aria-selected', String(isTarget));
+        });
+        panels.forEach((p) => p.classList.remove('active'));
+        document.getElementById(`tab-${tabId}`)?.classList.add('active');
+      }
+
+      // Restore from hash on load
+      const initial = window.location.hash.slice(1);
+      const validTabs = Array.from(btns).map((b) => b.dataset['tab']);
+      if (initial && validTabs.includes(initial)) {
+        activate(initial);
+      }
+
+      btns.forEach((btn, i) => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset['tab'];
+          if (tab) {
+            activate(tab);
+            history.replaceState(null, '', `#${tab}`);
+          }
+        });
+
+        btn.addEventListener('keydown', (e) => {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          const dir = e.key === 'ArrowRight' ? 1 : -1;
+          const next = btns[(i + dir + btns.length) % btns.length];
+          next?.focus();
+          next?.click();
+        });
       });
-      panels.forEach((p) => p.classList.remove('active'));
-      document.getElementById(`tab-${tabId}`)?.classList.add('active');
     }
 
-    // Restore from hash on load
-    const initial = window.location.hash.slice(1);
-    const validTabs = Array.from(btns).map((b) => b.dataset['tab']);
-    if (initial && validTabs.includes(initial)) {
-      activate(initial);
+    // Collapse the project list past a threshold behind a "show more" toggle,
+    // so a long list doesn't force endless scrolling. All projects are
+    // server-rendered, so no-JS visitors still see the full list.
+    function initProjects() {
+      const INITIAL = 4;
+      const list = document.querySelector<HTMLElement>('.project-list');
+      const toggle = document.querySelector<HTMLButtonElement>('.project-more');
+      if (!list || !toggle) return;
+
+      const items = Array.from(list.querySelectorAll<HTMLElement>('.project-item'));
+      const overflow = items.slice(INITIAL);
+      if (overflow.length === 0) {
+        toggle.hidden = true;
+        return;
+      }
+
+      let expanded = false;
+      function render() {
+        overflow.forEach((el) => { el.hidden = !expanded; });
+        toggle!.textContent = expanded ? '↑ show less' : `↓ show ${overflow.length} more`;
+        toggle!.setAttribute('aria-expanded', String(expanded));
+      }
+      toggle.hidden = false;
+      render();
+
+      toggle.addEventListener('click', () => {
+        expanded = !expanded;
+        render();
+      });
     }
 
-    btns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const tab = btn.dataset['tab'];
-        if (tab) {
-          activate(tab);
-          history.replaceState(null, '', `#${tab}`);
-        }
-      });
+    document.addEventListener('astro:page-load', () => {
+      initTabs();
+      initProjects();
     });
   </script>
 </Layout>
