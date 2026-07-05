@@ -1,36 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getSortedPosts, formatMonthYear } from '../lib/posts';
+import { getSortedProjects, projectHref } from '../lib/projects';
 
 const posts = await getSortedPosts();
-
-interface Project {
-  name: string;
-  url: string;
-  desc: string;
-  stack: string[];
-}
-
-const projects: Project[] = [
-  {
-    name: 'boltq',
-    url: 'https://github.com/cameronbell',
-    desc: 'A job queue built on Postgres advisory locks. No Redis, no extra infra — just your existing database and a few hundred lines of Go.',
-    stack: ['Go', 'PostgreSQL', 'OSS'],
-  },
-  {
-    name: 'driftlog',
-    url: 'https://github.com/cameronbell',
-    desc: 'Structured diff logging for schema migrations. Catches the cases where your migration ran fine in staging but quietly broke something in prod.',
-    stack: ['Go', 'CLI'],
-  },
-  {
-    name: 'hue',
-    url: 'https://github.com/cameronbell',
-    desc: 'Terminal color token generator. Define a palette once, export to CSS variables, Tailwind config, or Figma tokens.',
-    stack: ['TypeScript', 'OSS'],
-  },
-];
+const projects = await getSortedProjects();
 
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -102,15 +76,22 @@ const jsonLd = JSON.stringify({
             <p class="empty">Nothing here yet.</p>
           ) : (
             <div class="project-list" id="project-list">
-              {projects.map((p) => (
-                <a class="project-item" href={p.url} target="_blank" rel="noopener noreferrer">
-                  <div class="project-name">{p.name}</div>
-                  <p class="project-desc">{p.desc}</p>
-                  <div class="project-stack">
-                    {p.stack.map((s) => <span>{s}</span>)}
-                  </div>
-                </a>
-              ))}
+              {projects.map((p) => {
+                const href = projectHref(p);
+                const Card = href ? 'a' : 'div';
+                return (
+                  <Card
+                    class="project-item"
+                    {...(href && { href, target: '_blank', rel: 'noopener noreferrer' })}
+                  >
+                    <div class="project-name">{p.data.name}</div>
+                    <p class="project-desc">{p.data.description}</p>
+                    <div class="project-stack">
+                      {p.data.stack.map((s) => <span>{s}</span>)}
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           )}
           {projects.length > 0 && (
