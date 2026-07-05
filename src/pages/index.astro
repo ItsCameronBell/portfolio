@@ -170,20 +170,12 @@ const projects: Project[] = [
 
         <section>
           <h2 class="section-head">Education</h2>
-          <div class="cv-list">
-
-            <div class="cv-item">
-              <span class="cv-date">2015–19</span>
-              <div class="cv-body">
-                <a class="cv-org" href="#" target="_blank" rel="noopener noreferrer">[University]</a>
-                <div class="cv-roles">
-                  <div class="cv-role-entry">
-                    <span class="cv-role">BSc Computer Science</span>
-                  </div>
-                </div>
-              </div>
+          <div class="edu">
+            <span class="edu-date">2015–19</span>
+            <div class="edu-body">
+              <div class="edu-degree">BSc Computer Science</div>
+              <a class="edu-org" href="#" target="_blank" rel="noopener noreferrer">[University]</a>
             </div>
-
           </div>
         </section>
 
@@ -545,60 +537,33 @@ const projects: Project[] = [
   .tag + .tag { margin-left: 0.35rem; }
   .tag::before { content: '#'; }
 
-  /* ── CV timeline ────
-     Rail runs through the 1.25rem gap between the date column (5.5rem)
-     and the content column, so text stays aligned with the writing list. */
+  /* ── Experience ────
+     A single continuous hairline 'spine' runs the full height of the list —
+     career progression as one unbroken line, same weight as every other rule
+     on the page. Entries hang off it; no nodes or dots. */
   .cv-list {
     display: flex;
     flex-direction: column;
-    --rail-x: 6.125rem;
+    gap: 1.6rem;
+    border-left: 1px solid var(--border);
+    padding-left: 1.5rem;
   }
 
   .cv-item {
     display: grid;
-    grid-template-columns: 5.5rem 1fr;
+    grid-template-columns: 5rem 1fr;
     gap: 0 1.25rem;
-    padding: 0 0 1.35rem;
-    position: relative;
-  }
-
-  .cv-item:last-child { padding-bottom: 0; }
-
-  .cv-item::before {
-    content: '';
-    position: absolute;
-    left: calc(var(--rail-x) - 0.5px);
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--border);
-  }
-
-  .cv-item:first-child::before { top: 0.45rem; }
-  .cv-item:last-child::before { bottom: auto; height: 0.45rem; }
-  .cv-item:first-child:last-child::before { display: none; }
-
-  .cv-item::after {
-    content: '';
-    position: absolute;
-    left: calc(var(--rail-x) - 3px);
-    top: 0.4rem;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    border: 1px solid var(--faint);
-    background: var(--bg);
   }
 
   .cv-date {
     font-family: var(--mono);
     font-size: 0.7rem;
     color: var(--faint);
-    padding-top: 0.15rem;
+    padding-top: 0.2rem;
     line-height: 1.4;
   }
 
-  /* Company is the anchor on the timeline */
+  /* Company is the anchor; roles nest beneath it */
   .cv-org {
     display: inline-block;
     font-size: 0.875rem;
@@ -637,6 +602,41 @@ const projects: Project[] = [
     font-size: 0.82rem;
     color: var(--muted);
     line-height: 1.4;
+  }
+
+  /* ── Education ────
+     A single entry — one aligned statement, not a list. Same date column
+     as Experience so it rhymes, but no row rules: it reads as one fact. */
+  .edu {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0 1.25rem;
+  }
+
+  .edu-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+    padding-top: 0.2rem;
+    line-height: 1.4;
+  }
+
+  .edu-degree {
+    font-size: 0.875rem;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 0.15rem;
+  }
+
+  .edu-org {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .edu-org:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   /* ── Compensation table ──── */
@@ -741,16 +741,16 @@ const projects: Project[] = [
 
     .writing-date { padding-top: 0; }
 
-    .cv-item {
+    .cv-list { padding-left: 1rem; gap: 1.25rem; }
+
+    .cv-item,
+    .edu {
       grid-template-columns: 1fr;
       gap: 0.1rem 0;
-      padding-bottom: 1.1rem;
     }
 
-    .cv-item::before,
-    .cv-item::after { display: none; }
-
-    .cv-date { padding-top: 0; }
+    .cv-date,
+    .edu-date { padding-top: 0; }
 
     .cv-role-entry { flex-wrap: wrap; gap: 0.35rem; }
   }
