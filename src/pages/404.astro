@@ -3,6 +3,9 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="404 — Cameron Bell" description="Page not found.">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex" />
+  </Fragment>
   <main id="main" class="wrap">
     <h1 class="code">404</h1>
     <p class="msg">Nothing here.</p>

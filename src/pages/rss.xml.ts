@@ -13,6 +13,8 @@ export async function GET(context: APIContext) {
     title: 'Cameron Bell',
     description: 'Writing on software engineering, systems, and craft.',
     site: context.site,
+    xmlns: { atom: 'http://www.w3.org/2005/Atom' },
+    customData: `<atom:link href="${new URL('rss.xml', context.site).href}" rel="self" type="application/rss+xml"/>`,
     items: posts.map((post) => ({
       title: post.data.title,
       pubDate: post.data.date,

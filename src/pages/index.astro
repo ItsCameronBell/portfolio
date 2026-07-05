@@ -128,7 +128,7 @@ const jsonLd = JSON.stringify({
           ) : (
             <div class="writing-list">
               {posts.map((post) => (
-                <a class="writing-item" href={`/posts/${post.id}`}>
+                <a class="writing-item" href={`/posts/${post.id}/`}>
                   <span class="writing-date">{formatMonthYear(post.data.date)}</span>
                   <div>
                     <div class="writing-title">{post.data.title}</div>
