@@ -68,6 +68,26 @@ button:focus-visible {
   border-radius: 1px;
 }
 
+/* Hidden until focused via keyboard, then drops in at the top left */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.5rem 0.9rem;
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
 /* github-light's orange (parameter names) is 3.49:1 on white — below WCAG AA.
    Shiki inlines it as a custom property, so an !important override swaps it
    for the site accent (5.02:1) wherever code is highlighted. */

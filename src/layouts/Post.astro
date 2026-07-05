@@ -14,7 +14,7 @@ const formattedDate = formatFullDate(date);
 ---
 
 <Layout title={`${title} — Cameron Bell`} description={description} ogType="article">
-  <div class="post-wrap">
+  <main id="main" class="post-wrap">
     <nav class="post-nav">
       <a href="/">← Cameron Bell</a>
     </nav>
@@ -30,7 +30,7 @@ const formattedDate = formatFullDate(date);
     <article class="post-body">
       <slot />
     </article>
-  </div>
+  </main>
 </Layout>
 
 <style is:global>
