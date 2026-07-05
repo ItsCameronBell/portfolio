@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cameronbell.dev/sitemap-index.xml
