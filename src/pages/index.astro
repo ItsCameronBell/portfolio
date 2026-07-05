@@ -65,20 +65,28 @@ const projects: Project[] = [
     <!-- ── Main ──── -->
     <main id="main" class="main">
 
-      <div class="tab-bar" role="tablist">
+      <div class="tab-bar" role="tablist" aria-label="Sections">
         <button class="tab-btn active" id="tab-btn-work" data-tab="work" role="tab" aria-selected="true" aria-controls="tab-work">work</button>
-        <button class="tab-btn" id="tab-btn-cv" data-tab="cv" role="tab" aria-selected="false" aria-controls="tab-cv">cv</button>
+        <button class="tab-btn" id="tab-btn-cv" data-tab="cv" role="tab" aria-selected="false" aria-controls="tab-cv" tabindex="-1">cv</button>
       </div>
+      <noscript>
+        <style>
+          /* Without JS the tab buttons are inert — show every panel instead */
+          .tab-bar { display: none; }
+          .tab-panel { display: block !important; }
+          .tab-panel + .tab-panel { margin-top: 3rem; }
+        </style>
+      </noscript>
 
       <!-- Tab: work -->
-      <div class="tab-panel active" id="tab-work" role="tabpanel" aria-labelledby="tab-btn-work">
+      <div class="tab-panel active" id="tab-work" role="tabpanel" aria-labelledby="tab-btn-work" tabindex="0">
 
         <section>
           <h2 class="section-head">Projects</h2>
           {projects.length === 0 ? (
             <p class="empty">Nothing here yet.</p>
           ) : (
-            <div class="project-list">
+            <div class="project-list" id="project-list">
               {projects.map((p) => (
                 <a class="project-item" href={p.url} target="_blank" rel="noopener noreferrer">
                   <div class="project-name">{p.name}</div>
@@ -91,7 +99,7 @@ const projects: Project[] = [
             </div>
           )}
           {projects.length > 0 && (
-            <button class="project-more" hidden aria-expanded="false"></button>
+            <button class="project-more" hidden aria-expanded="false" aria-controls="project-list"></button>
           )}
         </section>
 
@@ -129,7 +137,7 @@ const projects: Project[] = [
       </div>
 
       <!-- Tab: cv -->
-      <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv">
+      <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv" tabindex="0">
 
         <a class="cv-download" href="/cv.pdf" download="cameron-bell-cv.pdf">↓ download cv</a>
 
@@ -188,10 +196,10 @@ const projects: Project[] = [
           <table class="comp-table">
             <thead>
               <tr>
-                <th>Period</th>
-                <th>Company</th>
-                <th>Role</th>
-                <th>Base</th>
+                <th scope="col">Period</th>
+                <th scope="col">Company</th>
+                <th scope="col">Role</th>
+                <th scope="col">Base</th>
               </tr>
             </thead>
             <tbody>
@@ -237,17 +245,18 @@ const projects: Project[] = [
           const isTarget = b.dataset['tab'] === tabId;
           b.classList.toggle('active', isTarget);
           b.setAttribute('aria-selected', String(isTarget));
+          b.tabIndex = isTarget ? 0 : -1;
         });
         panels.forEach((p) => p.classList.remove('active'));
         document.getElementById(`tab-${tabId}`)?.classList.add('active');
       }
 
-      // Restore from hash on load
+      // Restore from hash on load; otherwise activate the first tab so the
+      // roving tabindex starts in a consistent state.
       const initial = window.location.hash.slice(1);
       const validTabs = Array.from(btns).map((b) => b.dataset['tab']);
-      if (initial && validTabs.includes(initial)) {
-        activate(initial);
-      }
+      const start = initial && validTabs.includes(initial) ? initial : validTabs[0];
+      if (start) activate(start);
 
       btns.forEach((btn, i) => {
         btn.addEventListener('click', () => {
@@ -259,9 +268,18 @@ const projects: Project[] = [
         });
 
         btn.addEventListener('keydown', (e) => {
-          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-          const dir = e.key === 'ArrowRight' ? 1 : -1;
-          const next = btns[(i + dir + btns.length) % btns.length];
+          let next: HTMLButtonElement | undefined;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            const dir = e.key === 'ArrowRight' ? 1 : -1;
+            next = btns[(i + dir + btns.length) % btns.length];
+          } else if (e.key === 'Home') {
+            next = btns[0];
+          } else if (e.key === 'End') {
+            next = btns[btns.length - 1];
+          } else {
+            return;
+          }
+          e.preventDefault();
           next?.focus();
           next?.click();
         });
