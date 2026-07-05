@@ -29,7 +29,7 @@ const formattedDate = formatFullDate(date);
 
 <style is:global>
   .post-wrap {
-    max-width: 42rem;
+    max-width: 40rem;
     margin: 0 auto;
     padding: 0 1.5rem 6rem;
   }
@@ -58,6 +58,7 @@ const formattedDate = formatFullDate(date);
     line-height: 1.25;
     margin-bottom: 0.6rem;
     letter-spacing: -0.01em;
+    text-wrap: balance;
   }
 
   .post-date {
@@ -68,22 +69,24 @@ const formattedDate = formatFullDate(date);
 
   /* Article prose */
   .post-body {
+    font-size: 1.0625rem;
     line-height: 1.75;
   }
 
   .post-body p {
     margin-bottom: 1.4rem;
+    text-wrap: pretty;
   }
 
   .post-body h2 {
-    font-size: 1.15rem;
+    font-size: 1.15em;
     font-weight: 600;
     margin: 2.5rem 0 0.75rem;
     letter-spacing: -0.01em;
   }
 
   .post-body h3 {
-    font-size: 1rem;
+    font-size: 1em;
     font-weight: 600;
     margin: 2rem 0 0.6rem;
   }
