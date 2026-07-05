@@ -90,6 +90,9 @@ const projects: Project[] = [
               ))}
             </div>
           )}
+          {projects.length > 0 && (
+            <button class="project-more" hidden aria-expanded="false"></button>
+          )}
         </section>
 
         <section>
@@ -465,6 +468,23 @@ const projects: Project[] = [
   }
 
   .project-item { display: block; }
+
+  /* Class selector beats the UA [hidden] rule, so make hiding explicit. */
+  .project-item[hidden] { display: none; }
+
+  .project-more {
+    margin-top: 1.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+
+  .project-more:hover { color: var(--text); }
 
   .project-name {
     font-size: 0.95rem;
