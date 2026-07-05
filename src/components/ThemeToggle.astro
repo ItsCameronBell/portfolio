@@ -6,12 +6,27 @@
 <button class="theme-toggle" aria-label="Toggle theme">◐</button>
 
 <script>
+  const THEMES = ['light', 'dark', 'paper'] as const;
+  const ICONS: Record<(typeof THEMES)[number], string> = {
+    light: '◐',
+    dark: '◑',
+    paper: '◒',
+  };
+
   const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
+
+  function paint(theme: string) {
+    if (btn) btn.textContent = ICONS[theme as (typeof THEMES)[number]] ?? '◐';
+  }
+
+  paint(document.documentElement.getAttribute('data-theme') ?? 'light');
+
   btn?.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
+    const current = document.documentElement.getAttribute('data-theme') ?? 'light';
+    const next = THEMES[(THEMES.indexOf(current as (typeof THEMES)[number]) + 1) % THEMES.length];
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
+    paint(next);
   });
 </script>
 

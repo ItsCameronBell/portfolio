@@ -26,6 +26,16 @@
   --surface: #1c1c1c;
 }
 
+[data-theme="paper"] {
+  --bg:      #f6f1e6;
+  --text:    #2b2620;
+  --muted:   #6b6155;
+  --faint:   #8a8074;
+  --accent:  #b45309;
+  --border:  #e5dcc8;
+  --surface: #efe6d3;
+}
+
 html {
   color-scheme: light;
   -webkit-tap-highlight-color: transparent;
