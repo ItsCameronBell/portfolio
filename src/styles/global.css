@@ -4,6 +4,8 @@
   padding: 0;
 }
 
+/* Contrast note: --faint is tuned to pass WCAG AA (4.5:1) against --bg only.
+   Don't put --faint text on --surface — that pairing fails in light and dark. */
 :root {
   --bg:      #ffffff;
   --text:    #111111;
@@ -30,8 +32,8 @@
   --bg:      #f6f1e6;
   --text:    #2b2620;
   --muted:   #6b6155;
-  --faint:   #8a8074;
-  --accent:  #b45309;
+  --faint:   #6f665a;
+  --accent:  #a84d07;
   --border:  #e5dcc8;
   --surface: #efe6d3;
 }
@@ -64,6 +66,13 @@ button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 1px;
+}
+
+/* github-light's orange (parameter names) is 3.49:1 on white — below WCAG AA.
+   Shiki inlines it as a custom property, so an !important override swaps it
+   for the site accent (5.02:1) wherever code is highlighted. */
+pre.astro-code span[style*="#E36209" i] {
+  --shiki-light: #b45309 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
