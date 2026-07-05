@@ -6,9 +6,10 @@ interface Props {
   title: string;
   date: Date;
   description?: string;
+  tags?: string[];
 }
 
-const { title, date, description } = Astro.props;
+const { title, date, description, tags } = Astro.props;
 const formattedDate = formatFullDate(date);
 ---
 
@@ -20,6 +21,11 @@ const formattedDate = formatFullDate(date);
     <header class="post-head">
       <h1 class="post-title">{title}</h1>
       <time class="post-date" datetime={date.toISOString()}>{formattedDate}</time>
+      {tags && tags.length > 0 && (
+        <div class="post-tags">
+          {tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      )}
     </header>
     <article class="post-body">
       <slot />
@@ -66,6 +72,16 @@ const formattedDate = formatFullDate(date);
     font-size: 0.72rem;
     color: var(--faint);
   }
+
+  .post-tags {
+    margin-top: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+  }
+
+  .post-tags .tag + .tag { margin-left: 0.35rem; }
+  .post-tags .tag::before { content: '#'; }
 
   /* Article prose */
   .post-body {
