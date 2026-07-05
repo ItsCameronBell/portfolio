@@ -345,7 +345,9 @@ const projects: Project[] = [
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border);
-    overflow: hidden;
+    /* auto, not hidden: on short viewports the bottom links must stay
+       reachable — focus can land on them, so they can't be clipped away */
+    overflow-y: auto;
   }
 
   .brand {
@@ -414,8 +416,11 @@ const projects: Project[] = [
     margin-top: 0.75rem;
   }
 
+  /* Links inside running text need more than a color cue */
   .sidebar-built a {
     color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
     transition: color 0.1s;
   }
 

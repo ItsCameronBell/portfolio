@@ -15,15 +15,21 @@
 
   const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
 
+  function nextOf(theme: string) {
+    return THEMES[(THEMES.indexOf(theme as (typeof THEMES)[number]) + 1) % THEMES.length]!;
+  }
+
   function paint(theme: string) {
-    if (btn) btn.textContent = ICONS[theme as (typeof THEMES)[number]] ?? '◐';
+    if (!btn) return;
+    btn.textContent = ICONS[theme as (typeof THEMES)[number]] ?? '◐';
+    btn.setAttribute('aria-label', `Switch to ${nextOf(theme)} theme`);
   }
 
   paint(document.documentElement.getAttribute('data-theme') ?? 'light');
 
   btn?.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme') ?? 'light';
-    const next = THEMES[(THEMES.indexOf(current as (typeof THEMES)[number]) + 1) % THEMES.length];
+    const next = nextOf(current);
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
     paint(next);
