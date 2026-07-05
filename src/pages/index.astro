@@ -53,13 +53,13 @@ const projects: Project[] = [
 
       <div class="sidebar-links">
         <a href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="https://www.linkedin.com/in/cameronbell" target="_blank" rel="noopener noreferrer">linkedin</a>
         <a href="mailto:me@cameronbell.email">email</a>
-        <a href="/rss.xml">rss</a>
-        <a href="/cv.pdf" download="cameron-bell-cv.pdf">cv</a>
+        <a href="https://hardcover.app/@cameronbell" target="_blank" rel="noopener noreferrer">hardcover</a>
       </div>
 
-      <div class="sidebar-copyright">© 2026 Cameron Bell</div>
       <p class="sidebar-built">Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> and <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a>. Writing is my own.</p>
+      <div class="sidebar-copyright">© 2026 Cameron Bell</div>
     </aside>
 
     <!-- ── Main ──── -->
@@ -93,7 +93,10 @@ const projects: Project[] = [
         </section>
 
         <section>
-          <h2 class="section-head">Writing</h2>
+          <div class="section-head-row">
+            <h2 class="section-head">Writing</h2>
+            <a class="section-feed" href="/rss.xml">rss</a>
+          </div>
           {posts.length === 0 ? (
             <p class="empty">Nothing here yet.</p>
           ) : (
@@ -366,6 +369,9 @@ const projects: Project[] = [
   .sidebar-spacer { flex: 1; }
 
   .sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     font-family: var(--mono);
     font-size: 0.7rem;
     line-height: 1;
@@ -375,31 +381,28 @@ const projects: Project[] = [
   .sidebar-links a {
     color: var(--faint);
     transition: color 0.1s;
+    width: fit-content;
   }
 
   .sidebar-links a:hover { color: var(--text); }
-
-  .sidebar-links a + a::before {
-    content: ' · ';
-    color: var(--border);
-  }
 
   .sidebar-copyright {
     font-family: var(--mono);
     font-size: 0.67rem;
     color: var(--faint);
+    margin-top: 0.35rem;
   }
 
   .sidebar-built {
     font-family: var(--mono);
-    font-size: 0.62rem;
-    color: var(--border);
+    font-size: 0.67rem;
+    color: var(--faint);
     line-height: 1.5;
     margin-top: 0.75rem;
   }
 
   .sidebar-built a {
-    color: var(--faint);
+    color: var(--muted);
     transition: color 0.1s;
   }
 
@@ -417,6 +420,25 @@ const projects: Project[] = [
     color: var(--muted);
     margin-bottom: 1rem;
   }
+
+  /* Writing heading with its feed link on the right */
+  .section-head-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .section-head-row .section-head { margin-bottom: 0; }
+
+  .section-feed {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+    transition: color 0.1s;
+  }
+
+  .section-feed:hover { color: var(--text); }
 
   /* ── CV download ──── */
   .cv-download {
