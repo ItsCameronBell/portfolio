@@ -31,9 +31,24 @@ const projects: Project[] = [
     stack: ['TypeScript', 'OSS'],
   },
 ];
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Cameron Bell',
+  jobTitle: 'Software Engineer',
+  url: Astro.site?.href,
+  sameAs: [
+    'https://github.com/cameronbell',
+    'https://www.linkedin.com/in/cameronbell',
+  ],
+});
 ---
 
 <Layout>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
+  </Fragment>
   <div class="site">
 
     <!-- ── Sidebar ──── -->

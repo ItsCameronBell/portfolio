@@ -11,9 +11,30 @@ interface Props {
 
 const { title, date, description, tags } = Astro.props;
 const formattedDate = formatFullDate(date);
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  ...(description && { description }),
+  datePublished: date.toISOString(),
+  dateModified: date.toISOString(),
+  ...(tags && tags.length > 0 && { keywords: tags.join(', ') }),
+  url: Astro.url.href,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': Astro.url.href },
+  author: {
+    '@type': 'Person',
+    name: 'Cameron Bell',
+    url: Astro.site?.href,
+  },
+});
 ---
 
 <Layout title={`${title} — Cameron Bell`} description={description} ogType="article">
+  <Fragment slot="head">
+    <meta property="article:published_time" content={date.toISOString()} />
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
+  </Fragment>
   <main id="main" class="post-wrap">
     <nav class="post-nav">
       <a href="/">← Cameron Bell</a>
