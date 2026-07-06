@@ -12,3 +12,29 @@ export async function getSortedProjects(): Promise<Project[]> {
 export function projectHref(project: Project): string | undefined {
   return project.data.repo ?? project.data.demo;
 }
+
+export const AI_USAGE = {
+  full: { glyph: '●', label: 'built with ai' },
+  partial: { glyph: '◐', label: 'ai-assisted' },
+  none: { glyph: '○', label: 'no ai' },
+} as const;
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Render an aiNote for the tooltip. The note is author-written frontmatter,
+ * not full markdown: everything is escaped, then [text](https://url) becomes
+ * an anchor. http(s) only, so a stray paren or odd URL can't inject markup.
+ */
+export function renderAiNote(note: string): string {
+  return escapeHtml(note).replace(
+    /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+  );
+}

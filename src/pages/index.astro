@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getSortedPosts, formatMonthYear } from '../lib/posts';
-import { getSortedProjects, projectHref } from '../lib/projects';
+import { getSortedProjects, projectHref, AI_USAGE, renderAiNote } from '../lib/projects';
 
 const posts = await getSortedPosts();
 const projects = await getSortedProjects();
@@ -78,18 +78,39 @@ const jsonLd = JSON.stringify({
             <div class="project-list" id="project-list">
               {projects.map((p) => {
                 const href = projectHref(p);
-                const Card = href ? 'a' : 'div';
+                const ai = p.data.ai ? AI_USAGE[p.data.ai] : undefined;
+                const tipId = p.data.aiNote ? `ai-tip-${p.id}` : undefined;
                 return (
-                  <Card
-                    class="project-item"
-                    {...(href && { href, target: '_blank', rel: 'noopener noreferrer' })}
-                  >
-                    <div class="project-name">{p.data.name}</div>
+                  <div class="project-item">
+                    <div class="project-head">
+                      {href ? (
+                        <a class="project-name project-link" href={href} target="_blank" rel="noopener noreferrer">
+                          {p.data.name}
+                        </a>
+                      ) : (
+                        <span class="project-name">{p.data.name}</span>
+                      )}
+                      {ai && (
+                        <span class="ai">
+                          <span
+                            class="ai-badge"
+                            {...(tipId && { tabindex: 0, 'aria-describedby': tipId })}
+                          >
+                            <span aria-hidden="true">{ai.glyph}</span> {ai.label}
+                          </span>
+                          {p.data.aiNote && (
+                            <span class="ai-tip" role="tooltip" id={tipId}>
+                              <span class="ai-tip-inner" set:html={renderAiNote(p.data.aiNote)} />
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </div>
                     <p class="project-desc">{p.data.description}</p>
                     <div class="project-stack">
                       {p.data.stack.map((s) => <span>{s}</span>)}
                     </div>
-                  </Card>
+                  </div>
                 );
               })}
             </div>
@@ -486,10 +507,26 @@ const jsonLd = JSON.stringify({
     gap: 1.75rem;
   }
 
-  .project-item { display: block; }
+  /* relative so the name link's ::after can stretch over the whole card */
+  .project-item { display: block; position: relative; }
 
   /* Class selector beats the UA [hidden] rule, so make hiding explicit. */
   .project-item[hidden] { display: none; }
+
+  /* The card used to be one big <a>; now the name is the link, stretched
+     over the card, so the ai tooltip can hold links without nesting <a>s. */
+  .project-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
 
   .project-more {
     margin-top: 1.75rem;
@@ -508,11 +545,79 @@ const jsonLd = JSON.stringify({
   .project-name {
     font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: 0.3rem;
     transition: color 0.1s;
   }
 
-  .project-item:hover .project-name { color: var(--accent); }
+  /* The ::after covers the card, so hovering anywhere on it hovers the link —
+     except over .ai, which stacks above and shouldn't suggest a card click. */
+  .project-link:hover { color: var(--accent); }
+
+  /* ── AI usage badge + tooltip ──── */
+  .ai {
+    position: relative;
+    z-index: 1; /* above the stretched card link, so the tooltip is reachable */
+  }
+
+  .ai-badge {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+
+  /* Only badges with a note invite interaction */
+  .ai-badge[tabindex] {
+    cursor: help;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+  }
+
+  .ai-badge:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  /* padding-top, not a margin gap: the bridge stays hoverable, so the
+     pointer can travel from badge to tooltip without it closing */
+  .ai-tip {
+    position: absolute;
+    top: 100%;
+    left: -0.25rem;
+    padding-top: 0.4rem;
+    width: max-content;
+    max-width: min(20rem, calc(100vw - 3rem));
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s, visibility 0.1s;
+  }
+
+  .ai:hover .ai-tip,
+  .ai:focus-within .ai-tip {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* --muted, not --faint: faint fails contrast on --surface (see global.css) */
+  .ai-tip-inner {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .ai-tip-inner :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .ai-tip-inner :global(a:hover) { color: var(--accent); }
 
   .project-desc {
     font-size: 0.875rem;

@@ -23,6 +23,10 @@ const projects = defineCollection({
     demo: z.string().url().optional(),
     stack: z.array(z.string()).default([]),
     order: z.number().default(0),
+    // How much AI went into the build. `aiNote` elaborates in a tooltip;
+    // plain text plus [markdown](https://links) only.
+    ai: z.enum(['full', 'partial', 'none']).optional(),
+    aiNote: z.string().optional(),
   }),
 });
 
