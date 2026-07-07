@@ -12,8 +12,6 @@ const posts = defineCollection({
   }),
 });
 
-// Projects have no detail page — the card links straight to repo (or demo).
-// The markdown body is unused; frontmatter carries everything the card shows.
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
   schema: z.object({
@@ -23,8 +21,6 @@ const projects = defineCollection({
     demo: z.string().url().optional(),
     stack: z.array(z.string()).default([]),
     order: z.number().default(0),
-    // How much AI went into the build. `aiNote` elaborates in a tooltip;
-    // plain text plus [markdown](https://links) only.
     ai: z.enum(['full', 'partial', 'none']).optional(),
     aiNote: z.string().optional(),
   }),

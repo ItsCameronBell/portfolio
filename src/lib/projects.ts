@@ -8,7 +8,6 @@ export async function getSortedProjects(): Promise<Project[]> {
   return projects.sort((a, b) => a.data.order - b.data.order);
 }
 
-/** The card's link target: repo first, demo as fallback, else none. */
 export function projectHref(project: Project): string | undefined {
   return project.data.repo ?? project.data.demo;
 }
@@ -27,11 +26,6 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
-/**
- * Render an aiNote for the tooltip. The note is author-written frontmatter,
- * not full markdown: everything is escaped, then [text](https://url) becomes
- * an anchor. http(s) only, so a stray paren or odd URL can't inject markup.
- */
 export function renderAiNote(note: string): string {
   return escapeHtml(note).replace(
     /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,

@@ -25,7 +25,6 @@ const jsonLd = JSON.stringify({
   </Fragment>
   <div class="site">
 
-    <!-- ── Sidebar ──── -->
     <aside class="sidebar">
       <div class="brand">
         <h1 class="brand-name">Cameron Bell</h1>
@@ -51,7 +50,6 @@ const jsonLd = JSON.stringify({
       <div class="sidebar-copyright">© 2026 Cameron Bell</div>
     </aside>
 
-    <!-- ── Main ──── -->
     <main id="main" class="main">
 
       <div class="tab-bar" role="tablist" aria-label="Sections">
@@ -60,14 +58,12 @@ const jsonLd = JSON.stringify({
       </div>
       <noscript>
         <style>
-          /* Without JS the tab buttons are inert — show every panel instead */
           .tab-bar { display: none; }
           .tab-panel { display: block !important; }
           .tab-panel + .tab-panel { margin-top: 3rem; }
         </style>
       </noscript>
 
-      <!-- Tab: work -->
       <div class="tab-panel active" id="tab-work" role="tabpanel" aria-labelledby="tab-btn-work" tabindex="0">
 
         <section>
@@ -153,7 +149,6 @@ const jsonLd = JSON.stringify({
 
       </div>
 
-      <!-- Tab: cv -->
       <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv" tabindex="0">
 
         <a class="cv-download" href="/cv.pdf" download="cameron-bell-cv.pdf">↓ download cv</a>
@@ -162,7 +157,6 @@ const jsonLd = JSON.stringify({
           <h2 class="section-head">Experience</h2>
           <div class="cv-list">
 
-            <!-- Multiple roles at the same company: each gets a sub-date -->
             <div class="cv-item">
               <span class="cv-date">2021–</span>
               <div class="cv-body">
@@ -180,7 +174,6 @@ const jsonLd = JSON.stringify({
               </div>
             </div>
 
-            <!-- Single role: no sub-date needed, tenure covers it -->
             <div class="cv-item">
               <span class="cv-date">2019–21</span>
               <div class="cv-body">
@@ -250,8 +243,6 @@ const jsonLd = JSON.stringify({
   </div>
 
   <script>
-    // Re-run on every view-transition navigation (and initial load), since
-    // the homepage DOM — and these buttons — get swapped in fresh each time.
     function initTabs() {
       const btns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
       const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
@@ -268,8 +259,6 @@ const jsonLd = JSON.stringify({
         document.getElementById(`tab-${tabId}`)?.classList.add('active');
       }
 
-      // Restore from hash on load; otherwise activate the first tab so the
-      // roving tabindex starts in a consistent state.
       const initial = window.location.hash.slice(1);
       const validTabs = Array.from(btns).map((b) => b.dataset['tab']);
       const start = initial && validTabs.includes(initial) ? initial : validTabs[0];
@@ -303,26 +292,23 @@ const jsonLd = JSON.stringify({
       });
     }
 
-    // Collapse the project list past a threshold behind a "show more" toggle,
-    // so a long list doesn't force endless scrolling. All projects are
-    // server-rendered, so no-JS visitors still see the full list.
-    function initProjects() {
-      const INITIAL = 4;
+    function initProjectListCollapse() {
+      const VISIBLE_WHEN_COLLAPSED = 4;
       const list = document.querySelector<HTMLElement>('.project-list');
       const toggle = document.querySelector<HTMLButtonElement>('.project-more');
       if (!list || !toggle) return;
 
       const items = Array.from(list.querySelectorAll<HTMLElement>('.project-item'));
-      const overflow = items.slice(INITIAL);
-      if (overflow.length === 0) {
+      const collapsible = items.slice(VISIBLE_WHEN_COLLAPSED);
+      if (collapsible.length === 0) {
         toggle.hidden = true;
         return;
       }
 
       let expanded = false;
       function render() {
-        overflow.forEach((el) => { el.hidden = !expanded; });
-        toggle!.textContent = expanded ? '↑ show less' : `↓ show ${overflow.length} more`;
+        collapsible.forEach((el) => { el.hidden = !expanded; });
+        toggle!.textContent = expanded ? '↑ show less' : `↓ show ${collapsible.length} more`;
         toggle!.setAttribute('aria-expanded', String(expanded));
       }
       toggle.hidden = false;
@@ -336,13 +322,12 @@ const jsonLd = JSON.stringify({
 
     document.addEventListener('astro:page-load', () => {
       initTabs();
-      initProjects();
+      initProjectListCollapse();
     });
   </script>
 </Layout>
 
 <style>
-  /* ── Layout ──── */
   .site {
     max-width: 60rem;
     margin: 0 auto;
@@ -353,7 +338,6 @@ const jsonLd = JSON.stringify({
     min-height: 100vh;
   }
 
-  /* ── Sidebar ──── */
   .sidebar {
     position: sticky;
     top: 0;
@@ -362,8 +346,6 @@ const jsonLd = JSON.stringify({
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border);
-    /* auto, not hidden: on short viewports the bottom links must stay
-       reachable — focus can land on them, so they can't be clipped away */
     overflow-y: auto;
   }
 
@@ -433,7 +415,6 @@ const jsonLd = JSON.stringify({
     margin-top: 0.75rem;
   }
 
-  /* Links inside running text need more than a color cue */
   .sidebar-built a {
     color: var(--muted);
     text-decoration: underline;
@@ -443,12 +424,10 @@ const jsonLd = JSON.stringify({
 
   .sidebar-built a:hover { color: var(--text); }
 
-  /* ── Main ──── */
   .main { padding: 3rem 0 4rem; }
 
   section + section { margin-top: 3rem; }
 
-  /* ── Section headings ──── */
   .section-head {
     font-size: 0.875rem;
     font-weight: 400;
@@ -456,7 +435,6 @@ const jsonLd = JSON.stringify({
     margin-bottom: 1rem;
   }
 
-  /* Writing heading with its feed link on the right */
   .section-head-row {
     display: flex;
     align-items: baseline;
@@ -475,7 +453,6 @@ const jsonLd = JSON.stringify({
 
   .section-feed:hover { color: var(--text); }
 
-  /* ── CV download ──── */
   .cv-download {
     display: inline-block;
     font-family: var(--mono);
@@ -493,28 +470,22 @@ const jsonLd = JSON.stringify({
     border-color: var(--muted);
   }
 
-  /* ── Empty state ──── */
   .empty {
     font-size: 0.875rem;
     color: var(--faint);
     font-style: italic;
   }
 
-  /* ── Projects ──── */
   .project-list {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
   }
 
-  /* relative so the name link's ::after can stretch over the whole card */
   .project-item { display: block; position: relative; }
 
-  /* Class selector beats the UA [hidden] rule, so make hiding explicit. */
   .project-item[hidden] { display: none; }
 
-  /* The card used to be one big <a>; now the name is the link, stretched
-     over the card, so the ai tooltip can hold links without nesting <a>s. */
   .project-link::after {
     content: '';
     position: absolute;
@@ -548,14 +519,11 @@ const jsonLd = JSON.stringify({
     transition: color 0.1s;
   }
 
-  /* The ::after covers the card, so hovering anywhere on it hovers the link —
-     except over .ai, which stacks above and shouldn't suggest a card click. */
   .project-link:hover { color: var(--accent); }
 
-  /* ── AI usage badge + tooltip ──── */
   .ai {
     position: relative;
-    z-index: 1; /* above the stretched card link, so the tooltip is reachable */
+    z-index: 1;
   }
 
   .ai-badge {
@@ -565,7 +533,6 @@ const jsonLd = JSON.stringify({
     white-space: nowrap;
   }
 
-  /* Only badges with a note invite interaction */
   .ai-badge[tabindex] {
     cursor: help;
     text-decoration: underline dotted;
@@ -578,8 +545,6 @@ const jsonLd = JSON.stringify({
     border-radius: 1px;
   }
 
-  /* padding-top, not a margin gap: the bridge stays hoverable, so the
-     pointer can travel from badge to tooltip without it closing */
   .ai-tip {
     position: absolute;
     top: 100%;
@@ -599,7 +564,6 @@ const jsonLd = JSON.stringify({
     visibility: visible;
   }
 
-  /* --muted, not --faint: faint fails contrast on --surface (see global.css) */
   .ai-tip-inner {
     display: block;
     background: var(--surface);
@@ -635,7 +599,6 @@ const jsonLd = JSON.stringify({
 
   .project-stack span + span::before { content: ' · '; }
 
-  /* ── Writing ──── */
   .writing-list { display: flex; flex-direction: column; }
 
   .writing-item {
@@ -681,10 +644,6 @@ const jsonLd = JSON.stringify({
   .tag + .tag { margin-left: 0.35rem; }
   .tag::before { content: '#'; }
 
-  /* ── Experience ────
-     A single continuous hairline 'spine' runs the full height of the list —
-     career progression as one unbroken line, same weight as every other rule
-     on the page. Entries hang off it; no nodes or dots. */
   .cv-list {
     display: flex;
     flex-direction: column;
@@ -707,7 +666,6 @@ const jsonLd = JSON.stringify({
     line-height: 1.4;
   }
 
-  /* Company is the anchor; roles nest beneath it */
   .cv-org {
     display: inline-block;
     font-size: 0.875rem;
@@ -727,7 +685,6 @@ const jsonLd = JSON.stringify({
     gap: 0.15rem;
   }
 
-  /* flex so sub-date + role sit on one line; no sub-date = role is flush-left */
   .cv-role-entry {
     display: flex;
     gap: 0.75rem;
@@ -748,9 +705,6 @@ const jsonLd = JSON.stringify({
     line-height: 1.4;
   }
 
-  /* ── Education ────
-     A single entry — one aligned statement, not a list. Same date column
-     as Experience so it rhymes, but no row rules: it reads as one fact. */
   .edu {
     display: grid;
     grid-template-columns: 5.5rem 1fr;
@@ -783,7 +737,6 @@ const jsonLd = JSON.stringify({
     text-underline-offset: 2px;
   }
 
-  /* ── Compensation table ──── */
   .comp-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -834,7 +787,6 @@ const jsonLd = JSON.stringify({
     font-style: italic;
   }
 
-  /* ── Tabs ──── */
   .tab-bar {
     display: flex;
     gap: 1.5rem;
@@ -863,16 +815,12 @@ const jsonLd = JSON.stringify({
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
-  /* ── Responsive ──── */
   @media (max-width: 640px) {
     .site {
       display: flex;
       flex-direction: column;
     }
 
-    /* Dissolve the sidebar box so its children join the page's flex column;
-       this lets the disclaimer + copyright be ordered below the main content
-       and pinned to the very bottom of the page. */
     .sidebar { display: contents; }
     .sidebar-spacer { display: none; }
 

@@ -42,8 +42,6 @@ const { lang, code, filename } = Astro.props;
     border-bottom: 1px solid var(--border);
   }
 
-  /* Theme colors come from the shared Shiki rules in global.css;
-     this only undoes the fence styling the figure frame replaces. */
   .cb-body :global(pre.astro-code) {
     margin: 0 !important;
     border-radius: 0 !important;

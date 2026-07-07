@@ -4,8 +4,6 @@
   padding: 0;
 }
 
-/* Contrast note: --faint is tuned to pass WCAG AA (4.5:1) against --bg only.
-   Don't put --faint text on --surface — that pairing fails in light and dark. */
 :root {
   --bg:      #ffffff;
   --text:    #111111;
@@ -65,7 +63,6 @@ button:focus-visible {
   border-radius: 1px;
 }
 
-/* Hidden until focused via keyboard, then drops in at the top left */
 .skip-link {
   position: fixed;
   top: 0.75rem;
@@ -85,9 +82,6 @@ button:focus-visible {
   transform: none;
 }
 
-/* Shiki runs with defaultColor: false, so each token only carries
-   --shiki-light/--shiki-dark custom properties and no actual color;
-   these rules pick the side matching the active theme. */
 pre.astro-code {
   background-color: var(--shiki-light-bg) !important;
   color: var(--shiki-light) !important;
@@ -106,9 +100,7 @@ pre.astro-code span {
   color: var(--shiki-dark) !important;
 }
 
-/* github-light's orange (parameter names) is 3.49:1 on white — below WCAG AA.
-   Shiki inlines it as a custom property, so an !important override swaps it
-   for the site accent (5.02:1) wherever code is highlighted. */
+/* github-light's #E36209 orange fails WCAG AA contrast on white */
 pre.astro-code span[style*="#E36209" i] {
   --shiki-light: #b45309 !important;
 }

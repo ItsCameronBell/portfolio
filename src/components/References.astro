@@ -61,8 +61,7 @@ function formatEditors(editors: string[]): string {
   return `${names} (ed${editors.length > 1 ? 's' : ''}.)`;
 }
 
-// Sort alphabetically by first author surname
-const sorted = [...refs].sort((a, b) =>
+const sortedByFirstAuthor = [...refs].sort((a, b) =>
   (a.authors[0] ?? '').localeCompare(b.authors[0] ?? '')
 );
 ---
@@ -70,7 +69,7 @@ const sorted = [...refs].sort((a, b) =>
 <section class="refs">
   <h2 class="refs-head">References</h2>
   <ul class="refs-list">
-    {sorted.map((ref) => (
+    {sortedByFirstAuthor.map((ref) => (
       <li class="ref-entry">
         {ref.type === 'book' && (
           <>
@@ -144,7 +143,6 @@ const sorted = [...refs].sort((a, b) =>
     font-size: 0.875rem;
     line-height: 1.65;
     color: var(--muted);
-    /* Hanging indent for wrapped lines */
     padding-left: 1.5rem;
     text-indent: -1.5rem;
   }

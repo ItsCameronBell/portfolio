@@ -1,14 +1,8 @@
----
-// Fixed to the top-right corner so it sits in the same place on every page.
-// Rendered once by Layout.astro; reads and writes data-theme on <html>.
----
-
 <button class="theme-toggle" aria-label="Toggle theme" transition:persist>◐</button>
 
 <script>
   declare global {
     interface Window {
-      /** Defined by the inline theme script in Layout.astro. */
       __setFavicon?: (theme: string) => void;
     }
   }
@@ -26,21 +20,21 @@
     return THEMES[(THEMES.indexOf(theme as (typeof THEMES)[number]) + 1) % THEMES.length]!;
   }
 
-  function paint(theme: string) {
+  function reflectTheme(theme: string) {
     window.__setFavicon?.(theme);
     if (!btn) return;
     btn.textContent = ICONS[theme as (typeof THEMES)[number]] ?? '◐';
     btn.setAttribute('aria-label', `Switch to ${nextOf(theme)} theme`);
   }
 
-  paint(document.documentElement.getAttribute('data-theme') ?? 'light');
+  reflectTheme(document.documentElement.getAttribute('data-theme') ?? 'light');
 
   btn?.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme') ?? 'light';
     const next = nextOf(current);
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
-    paint(next);
+    reflectTheme(next);
   });
 </script>
 
