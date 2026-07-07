@@ -15,7 +15,6 @@ export function projectHref(project: Project): string | undefined {
 export const AI_USAGE = {
   full: { glyph: '●', label: 'built with ai' },
   partial: { glyph: '◐', label: 'ai-assisted' },
-  none: { glyph: '○', label: 'no ai' },
 } as const;
 
 function escapeHtml(s: string): string {

@@ -74,7 +74,7 @@ const jsonLd = JSON.stringify({
             <div class="project-list" id="project-list">
               {projects.map((p) => {
                 const href = projectHref(p);
-                const ai = p.data.ai ? AI_USAGE[p.data.ai] : undefined;
+                const ai = p.data.ai && p.data.ai !== 'none' ? AI_USAGE[p.data.ai] : undefined;
                 const tipId = p.data.aiNote ? `ai-tip-${p.id}` : undefined;
                 return (
                   <div class="project-item">
@@ -795,8 +795,8 @@ const jsonLd = JSON.stringify({
 
   .tab-btn {
     font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--faint);
+    font-size: 0.82rem;
+    color: var(--muted);
     background: none;
     border: none;
     padding: 0;
@@ -804,10 +804,10 @@ const jsonLd = JSON.stringify({
     transition: color 0.1s;
   }
 
-  .tab-btn:hover { color: var(--muted); }
+  .tab-btn:not(.active):hover { color: var(--text); }
 
   .tab-btn.active {
-    color: var(--text);
+    color: var(--accent);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
