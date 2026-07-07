@@ -19,6 +19,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg:      #0f0f0f;
   --text:    #ebebeb;
   --muted:   #909090;
@@ -41,10 +42,6 @@
 html {
   color-scheme: light;
   -webkit-tap-highlight-color: transparent;
-}
-
-[data-theme="dark"] {
-  color-scheme: dark;
 }
 
 body {
@@ -86,6 +83,27 @@ button:focus-visible {
 
 .skip-link:focus {
   transform: none;
+}
+
+/* Shiki runs with defaultColor: false, so each token only carries
+   --shiki-light/--shiki-dark custom properties and no actual color;
+   these rules pick the side matching the active theme. */
+pre.astro-code {
+  background-color: var(--shiki-light-bg) !important;
+  color: var(--shiki-light) !important;
+}
+
+pre.astro-code span {
+  color: var(--shiki-light) !important;
+}
+
+[data-theme="dark"] pre.astro-code {
+  background-color: var(--shiki-dark-bg) !important;
+  color: var(--shiki-dark) !important;
+}
+
+[data-theme="dark"] pre.astro-code span {
+  color: var(--shiki-dark) !important;
 }
 
 /* github-light's orange (parameter names) is 3.49:1 on white — below WCAG AA.
