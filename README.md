@@ -30,3 +30,9 @@ src/
 ├── pages/
 └── styles/
 ```
+
+## Note
+
+I'm not a frontend/design person, so the UI and styling here were built with
+[Claude](https://claude.ai). All the writing and project content is my own.
+
