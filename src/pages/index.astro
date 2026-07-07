@@ -151,7 +151,7 @@ const jsonLd = JSON.stringify({
 
       <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv" tabindex="0">
 
-        <a class="cv-download" href="/cv.pdf" download="cameron-bell-cv.pdf">↓ download cv</a>
+        <a class="cv-download" href="/cv.pdf" download="cameron-bell-cv.pdf">↓ cv.pdf</a>
 
         <section>
           <h2 class="section-head">Experience</h2>
@@ -458,16 +458,12 @@ const jsonLd = JSON.stringify({
     font-family: var(--mono);
     font-size: 0.72rem;
     color: var(--faint);
-    border: 1px solid var(--border);
-    padding: 0.35rem 0.75rem;
-    border-radius: 3px;
-    margin-bottom: 2rem;
-    transition: color 0.1s, border-color 0.1s;
+    margin-bottom: 1.5rem;
+    transition: color 0.1s;
   }
 
   .cv-download:hover {
     color: var(--text);
-    border-color: var(--muted);
   }
 
   .empty {
