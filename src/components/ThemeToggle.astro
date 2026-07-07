@@ -6,6 +6,13 @@
 <button class="theme-toggle" aria-label="Toggle theme" transition:persist>◐</button>
 
 <script>
+  declare global {
+    interface Window {
+      /** Defined by the inline theme script in Layout.astro. */
+      __setFavicon?: (theme: string) => void;
+    }
+  }
+
   const THEMES = ['light', 'dark', 'paper'] as const;
   const ICONS: Record<(typeof THEMES)[number], string> = {
     light: '◐',
@@ -20,7 +27,7 @@
   }
 
   function paint(theme: string) {
-    (window as any).__setFavicon?.(theme);
+    window.__setFavicon?.(theme);
     if (!btn) return;
     btn.textContent = ICONS[theme as (typeof THEMES)[number]] ?? '◐';
     btn.setAttribute('aria-label', `Switch to ${nextOf(theme)} theme`);
