@@ -1,11 +1,17 @@
 ---
+import { render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { getSortedPosts, formatMonthYear } from '../lib/posts';
-import { getSortedProjects, projectHref, AI_USAGE, renderAiNote } from '../lib/projects';
+import { getSortedProjects, projectHref, AI_USAGE } from '../lib/projects';
 import { getSortedExperience, getSortedEducation, getCompensation } from '../lib/cv';
 
 const posts = await getSortedPosts();
-const projects = await getSortedProjects();
+const projects = await Promise.all(
+  (await getSortedProjects()).map(async (entry) => ({
+    entry,
+    AiNote: entry.body?.trim() ? (await render(entry)).Content : null,
+  })),
+);
 const experience = await getSortedExperience();
 const education = await getSortedEducation();
 const compensation = await getCompensation();
@@ -76,10 +82,10 @@ const jsonLd = JSON.stringify({
             <p class="empty">Nothing here yet.</p>
           ) : (
             <div class="project-list" id="project-list">
-              {projects.map((p) => {
+              {projects.map(({ entry: p, AiNote }) => {
                 const href = projectHref(p);
                 const ai = p.data.ai && p.data.ai !== 'none' ? AI_USAGE[p.data.ai] : undefined;
-                const tipId = p.data.aiNote ? `ai-tip-${p.id}` : undefined;
+                const tipId = AiNote ? `ai-tip-${p.id}` : undefined;
                 return (
                   <div class="project-item">
                     <div class="project-head">
@@ -91,19 +97,19 @@ const jsonLd = JSON.stringify({
                         <span class="project-name">{p.data.name}</span>
                       )}
                       {ai && (
-                        <span class="ai">
+                        <div class="ai">
                           <span
                             class="ai-badge"
                             {...(tipId && { tabindex: 0, 'aria-describedby': tipId })}
                           >
                             <span aria-hidden="true">{ai.glyph}</span> {ai.label}
                           </span>
-                          {p.data.aiNote && (
-                            <span class="ai-tip" role="tooltip" id={tipId}>
-                              <span class="ai-tip-inner" set:html={renderAiNote(p.data.aiNote)} />
-                            </span>
+                          {AiNote && (
+                            <div class="ai-tip" role="tooltip" id={tipId}>
+                              <div class="ai-tip-inner"><AiNote /></div>
+                            </div>
                           )}
-                        </span>
+                        </div>
                       )}
                     </div>
                     <p class="project-desc">{p.data.description}</p>
@@ -244,82 +250,8 @@ const jsonLd = JSON.stringify({
   </div>
 
   <script>
-    function initTabs() {
-      const btns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
-      const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
-      if (btns.length === 0) return;
-
-      function activate(tabId: string) {
-        btns.forEach((b) => {
-          const isTarget = b.dataset['tab'] === tabId;
-          b.classList.toggle('active', isTarget);
-          b.setAttribute('aria-selected', String(isTarget));
-          b.tabIndex = isTarget ? 0 : -1;
-        });
-        panels.forEach((p) => p.classList.remove('active'));
-        document.getElementById(`tab-${tabId}`)?.classList.add('active');
-      }
-
-      const initial = window.location.hash.slice(1);
-      const validTabs = Array.from(btns).map((b) => b.dataset['tab']);
-      const start = initial && validTabs.includes(initial) ? initial : validTabs[0];
-      if (start) activate(start);
-
-      btns.forEach((btn, i) => {
-        btn.addEventListener('click', () => {
-          const tab = btn.dataset['tab'];
-          if (tab) {
-            activate(tab);
-            history.replaceState(null, '', `#${tab}`);
-          }
-        });
-
-        btn.addEventListener('keydown', (e) => {
-          let next: HTMLButtonElement | undefined;
-          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-            const dir = e.key === 'ArrowRight' ? 1 : -1;
-            next = btns[(i + dir + btns.length) % btns.length];
-          } else if (e.key === 'Home') {
-            next = btns[0];
-          } else if (e.key === 'End') {
-            next = btns[btns.length - 1];
-          } else {
-            return;
-          }
-          e.preventDefault();
-          next?.focus();
-          next?.click();
-        });
-      });
-    }
-
-    function initProjectListCollapse() {
-      const VISIBLE_WHEN_COLLAPSED = 4;
-      const list = document.querySelector<HTMLElement>('.project-list');
-      const toggle = document.querySelector<HTMLButtonElement>('.project-more');
-      if (!list || !toggle) return;
-
-      const items = Array.from(list.querySelectorAll<HTMLElement>('.project-item'));
-      const collapsible = items.slice(VISIBLE_WHEN_COLLAPSED);
-      if (collapsible.length === 0) {
-        toggle.hidden = true;
-        return;
-      }
-
-      let expanded = false;
-      function render() {
-        collapsible.forEach((el) => { el.hidden = !expanded; });
-        toggle!.textContent = expanded ? '↑ show less' : `↓ show ${collapsible.length} more`;
-        toggle!.setAttribute('aria-expanded', String(expanded));
-      }
-      toggle.hidden = false;
-      render();
-
-      toggle.addEventListener('click', () => {
-        expanded = !expanded;
-        render();
-      });
-    }
+    import { initTabs } from '../scripts/tabs';
+    import { initProjectListCollapse } from '../scripts/project-collapse';
 
     document.addEventListener('astro:page-load', () => {
       initTabs();
@@ -560,7 +492,6 @@ const jsonLd = JSON.stringify({
   }
 
   .ai-tip-inner {
-    display: block;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 3px;
@@ -569,6 +500,10 @@ const jsonLd = JSON.stringify({
     color: var(--muted);
     line-height: 1.55;
   }
+
+  .ai-tip-inner :global(p) { margin: 0; }
+
+  .ai-tip-inner :global(p + p) { margin-top: 0.4em; }
 
   .ai-tip-inner :global(a) {
     color: var(--text);

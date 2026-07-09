@@ -16,18 +16,3 @@ export const AI_USAGE = {
   full: { glyph: '●', label: 'built with ai' },
   partial: { glyph: '◐', label: 'ai-assisted' },
 } as const;
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-export function renderAiNote(note: string): string {
-  return escapeHtml(note).replace(
-    /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
-  );
-}
