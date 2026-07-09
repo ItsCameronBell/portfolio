@@ -2,9 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import { getSortedPosts, formatMonthYear } from '../lib/posts';
 import { getSortedProjects, projectHref, AI_USAGE, renderAiNote } from '../lib/projects';
+import { getSortedExperience, getSortedEducation, getCompensation } from '../lib/cv';
 
 const posts = await getSortedPosts();
 const projects = await getSortedProjects();
+const experience = await getSortedExperience();
+const education = await getSortedEducation();
+const compensation = await getCompensation();
 
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -156,49 +160,55 @@ const jsonLd = JSON.stringify({
             <h2 class="section-head">Experience</h2>
             <a class="cv-download" href="/cv.pdf" download="cameron-bell-cv.pdf">[cv.pdf]</a>
           </div>
-          <div class="cv-list">
-
-            <div class="cv-item">
-              <span class="cv-date">2021–</span>
-              <div class="cv-body">
-                <a class="cv-org" href="#" target="_blank" rel="noopener noreferrer">[Company]</a>
-                <div class="cv-roles">
-                  <div class="cv-role-entry">
-                    <span class="cv-role-date">2023–</span>
-                    <span class="cv-role">Senior Software Engineer</span>
-                  </div>
-                  <div class="cv-role-entry">
-                    <span class="cv-role-date">2021–23</span>
-                    <span class="cv-role">Software Engineer</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="cv-item">
-              <span class="cv-date">2019–21</span>
-              <div class="cv-body">
-                <a class="cv-org" href="#" target="_blank" rel="noopener noreferrer">[Previous Company]</a>
-                <div class="cv-roles">
-                  <div class="cv-role-entry">
-                    <span class="cv-role">Junior Software Engineer</span>
+          {experience.length === 0 ? (
+            <p class="empty">Nothing here yet.</p>
+          ) : (
+            <div class="cv-list">
+              {experience.map((exp) => (
+                <div class="cv-item">
+                  <span class="cv-date">{exp.data.range}</span>
+                  <div class="cv-body">
+                    {exp.data.url ? (
+                      <a class="cv-org" href={exp.data.url} target="_blank" rel="noopener noreferrer">{exp.data.company}</a>
+                    ) : (
+                      <span class="cv-org">{exp.data.company}</span>
+                    )}
+                    <div class="cv-roles">
+                      {exp.data.roles.map((role) => (
+                        <div class="cv-role-entry">
+                          {role.range && <span class="cv-role-date">{role.range}</span>}
+                          <span class="cv-role">{role.title}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-
-          </div>
+          )}
         </section>
 
         <section>
           <h2 class="section-head">Education</h2>
-          <div class="edu">
-            <span class="edu-date">2015–19</span>
-            <div class="edu-body">
-              <div class="edu-degree">BSc Computer Science</div>
-              <a class="edu-org" href="#" target="_blank" rel="noopener noreferrer">[University]</a>
+          {education.length === 0 ? (
+            <p class="empty">Nothing here yet.</p>
+          ) : (
+            <div class="edu-list">
+              {education.map((edu) => (
+                <div class="edu">
+                  <span class="edu-date">{edu.data.range}</span>
+                  <div class="edu-body">
+                    <div class="edu-degree">{edu.data.degree}</div>
+                    {edu.data.url ? (
+                      <a class="edu-org" href={edu.data.url} target="_blank" rel="noopener noreferrer">{edu.data.institution}</a>
+                    ) : (
+                      <span class="edu-org">{edu.data.institution}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          )}
         </section>
 
         <section>
@@ -214,24 +224,14 @@ const jsonLd = JSON.stringify({
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="mono">2023–</td>
-                <td>[Company]</td>
-                <td>Senior Software Engineer</td>
-                <td class="mono salary">£95,000</td>
-              </tr>
-              <tr>
-                <td class="mono">2021–23</td>
-                <td>[Company]</td>
-                <td>Software Engineer</td>
-                <td class="mono salary">£72,000</td>
-              </tr>
-              <tr>
-                <td class="mono">2019–21</td>
-                <td>[Previous Company]</td>
-                <td>Junior Software Engineer</td>
-                <td class="mono salary">£48,000</td>
-              </tr>
+              {compensation.map((row) => (
+                <tr>
+                  <td class="mono">{row.period}</td>
+                  <td>{row.company}</td>
+                  <td>{row.role}</td>
+                  <td class="mono salary">{row.salary}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
           </div>
@@ -669,7 +669,7 @@ const jsonLd = JSON.stringify({
     margin-bottom: 0.3rem;
   }
 
-  .cv-org:hover {
+  a.cv-org:hover {
     text-decoration: underline;
     text-underline-offset: 2px;
   }
@@ -700,6 +700,12 @@ const jsonLd = JSON.stringify({
     line-height: 1.4;
   }
 
+  .edu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
   .edu {
     display: grid;
     grid-template-columns: 5.5rem 1fr;
@@ -727,7 +733,7 @@ const jsonLd = JSON.stringify({
     line-height: 1.4;
   }
 
-  .edu-org:hover {
+  a.edu-org:hover {
     text-decoration: underline;
     text-underline-offset: 2px;
   }
