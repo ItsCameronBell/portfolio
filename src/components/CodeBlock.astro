@@ -13,9 +13,9 @@ interface Props {
 const { lang, code, filename } = Astro.props;
 ---
 
-<figure class="cb">
-  {filename && <figcaption class="cb-header">{filename}</figcaption>}
-  <div class="cb-body">
+<figure class="codeblock">
+  {filename && <figcaption class="codeblock-header">{filename}</figcaption>}
+  <div class="codeblock-body">
     <Code
       code={code}
       lang={lang}
@@ -26,14 +26,14 @@ const { lang, code, filename } = Astro.props;
 </figure>
 
 <style>
-  .cb {
+  .codeblock {
     margin: 1.75rem 0;
     border-radius: 4px;
     overflow: hidden;
     border: 1px solid var(--border);
   }
 
-  .cb-header {
+  .codeblock-header {
     font-family: var(--mono);
     font-size: 0.7rem;
     color: var(--muted);
@@ -42,7 +42,7 @@ const { lang, code, filename } = Astro.props;
     border-bottom: 1px solid var(--border);
   }
 
-  .cb-body :global(pre.astro-code) {
+  .codeblock-body :global(pre.astro-code) {
     margin: 0 !important;
     border-radius: 0 !important;
     border: none;
