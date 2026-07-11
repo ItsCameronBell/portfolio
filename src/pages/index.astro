@@ -62,6 +62,7 @@ const jsonLd = JSON.stringify({
       </div>
 
       <p class="sidebar-built">Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> and <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a>. Writing is my own.</p>
+      <p class="sidebar-license">Words <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer license">CC BY-NC-ND</a>, code <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer license">GPL-3.0</a>.</p>
       <div class="sidebar-copyright">© 2026 Cameron Bell</div>
     </aside>
 
@@ -355,22 +356,27 @@ const jsonLd = JSON.stringify({
     margin-top: 0.35rem;
   }
 
-  .sidebar-built {
+  .sidebar-built,
+  .sidebar-license {
     font-family: var(--mono);
     font-size: 0.67rem;
     color: var(--faint);
     line-height: 1.5;
-    margin-top: 0.75rem;
   }
 
-  .sidebar-built a {
+  .sidebar-built { margin-top: 0.75rem; }
+  .sidebar-license { margin-top: 0.4rem; }
+
+  .sidebar-built a,
+  .sidebar-license a {
     color: var(--muted);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color 0.1s;
   }
 
-  .sidebar-built a:hover { color: var(--text); }
+  .sidebar-built a:hover,
+  .sidebar-license a:hover { color: var(--text); }
 
   .main { padding: 3rem 0 4rem; }
 
@@ -808,8 +814,10 @@ const jsonLd = JSON.stringify({
       padding-top: 1.5rem;
     }
 
+    .sidebar-license { order: 3; }
+
     .sidebar-copyright {
-      order: 3;
+      order: 4;
       padding-bottom: 2rem;
     }
 
