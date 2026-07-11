@@ -96,6 +96,12 @@ const jsonLd = JSON.stringify({
                       ) : (
                         <span class="project-name">{p.data.name}</span>
                       )}
+                    </div>
+                    <p class="project-desc">{p.data.description}</p>
+                    <div class="project-stack">
+                      <div class="project-langs">
+                        {p.data.stack.map((s) => <span>{s}</span>)}
+                      </div>
                       {ai && (
                         <div class="ai">
                           <span
@@ -111,10 +117,6 @@ const jsonLd = JSON.stringify({
                           )}
                         </div>
                       )}
-                    </div>
-                    <p class="project-desc">{p.data.description}</p>
-                    <div class="project-stack">
-                      {p.data.stack.map((s) => <span>{s}</span>)}
                     </div>
                   </div>
                 );
@@ -475,7 +477,7 @@ const jsonLd = JSON.stringify({
   .ai-tip {
     position: absolute;
     top: 100%;
-    left: -0.25rem;
+    right: -0.25rem;
     padding-top: 0.4rem;
     width: max-content;
     max-width: min(20rem, calc(100vw - 3rem));
@@ -522,12 +524,16 @@ const jsonLd = JSON.stringify({
   }
 
   .project-stack {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
     font-family: var(--mono);
     font-size: 0.67rem;
     color: var(--faint);
   }
 
-  .project-stack span + span::before { content: ' · '; }
+  .project-langs span + span::before { content: ' · '; }
 
   .writing-list { display: flex; flex-direction: column; }
 
