@@ -3,18 +3,19 @@ export interface SocialLink {
   href: string;
 }
 
-/**
- * Sidebar links, grouped into rows. The first group is how to reach me,
- * the second is what I'm into. Each inner array renders as one row.
- */
+export const site = {
+  name: 'Cameron Bell',
+  role: 'Software Engineer',
+} as const;
+
 export const socialGroups: SocialLink[][] = [
   [
-    { label: 'github', href: 'https://github.com/cameronbell' },
-    { label: 'linkedin', href: 'https://www.linkedin.com/in/cameronbell' },
+    { label: 'github', href: 'https://github.com/ItsCameronBell' },
+    { label: 'linkedin', href: 'https://www.linkedin.com/in/bell-cameron' },
     { label: 'email', href: 'mailto:hello@cameronbell.email' },
   ],
   [
-    { label: 'hardcover', href: 'https://hardcover.app/@cameronbell' },
-    { label: 'letterboxd', href: 'https://letterboxd.com/cameronbell' },
+    { label: 'hardcover', href: 'https://hardcover.app/@ItsCameronBell' },
+    { label: 'letterboxd', href: 'https://letterboxd.com/ItsCameronBell' },
   ],
 ];

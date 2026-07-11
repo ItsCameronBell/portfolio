@@ -1,6 +1,7 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getSortedPosts } from '../lib/posts';
+import { site } from '../config';
 
 export async function GET(context: APIContext) {
   if (!context.site) {
@@ -10,7 +11,7 @@ export async function GET(context: APIContext) {
   const posts = await getSortedPosts();
 
   return rss({
-    title: 'Cameron Bell',
+    title: site.name,
     description: 'Writing on software engineering, systems, and craft.',
     site: context.site,
     xmlns: { atom: 'http://www.w3.org/2005/Atom' },

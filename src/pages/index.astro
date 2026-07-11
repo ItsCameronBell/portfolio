@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import { getSortedPosts, formatMonthYear } from '../lib/posts';
 import { getSortedProjects, projectHref, AI_USAGE } from '../lib/projects';
 import { getSortedExperience, getSortedEducation, getCompensation } from '../lib/cv';
-import { socialGroups } from '../config';
+import { site, socialGroups } from '../config';
 
 const posts = await getSortedPosts();
 const projects = await Promise.all(
@@ -20,8 +20,8 @@ const compensation = await getCompensation();
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Cameron Bell',
-  jobTitle: 'Software Engineer',
+  name: site.name,
+  jobTitle: site.role,
   url: Astro.site?.href,
   sameAs: socialGroups.flat().map((link) => link.href).filter((href) => href.startsWith('http')),
 });
@@ -35,8 +35,8 @@ const jsonLd = JSON.stringify({
 
     <aside class="sidebar">
       <div class="brand">
-        <h1 class="brand-name">Cameron Bell</h1>
-        <p class="brand-role">Software Engineer</p>
+        <h1 class="brand-name">{site.name}</h1>
+        <p class="brand-role">{site.role}</p>
       </div>
 
       <p class="sidebar-about">
@@ -62,7 +62,7 @@ const jsonLd = JSON.stringify({
       </div>
 
       <p class="sidebar-note">Built with Claude. Writing is my own.</p>
-      <div class="sidebar-copyright">© 2026 Cameron Bell</div>
+      <div class="sidebar-copyright">© 2026 {site.name}</div>
     </aside>
 
     <main id="main" class="main">

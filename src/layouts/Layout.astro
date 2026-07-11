@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import { site } from '../config';
 
 interface Props {
   title?: string;
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const {
-  title = 'Cameron Bell',
+  title = site.name,
   description = 'Software engineer writing about backend systems, Go, and craft.',
   canonicalUrl = Astro.url.href,
   ogType = 'website',
@@ -30,13 +31,13 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="alternate" type="application/rss+xml" title="Cameron Bell" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:site_name" content="Cameron Bell" />
+    <meta property="og:site_name" content={site.name} />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

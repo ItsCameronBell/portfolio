@@ -1,8 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { site } from '../config';
 ---
 
-<Layout title="404 — Cameron Bell" description="Page not found.">
+<Layout title={`404 — ${site.name}`} description="Page not found.">
   <Fragment slot="head">
     <meta name="robots" content="noindex" />
   </Fragment>
