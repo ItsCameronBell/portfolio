@@ -4,6 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import { getSortedPosts, formatMonthYear } from '../lib/posts';
 import { getSortedProjects, projectHref, AI_USAGE } from '../lib/projects';
 import { getSortedExperience, getSortedEducation, getCompensation } from '../lib/cv';
+import { socialGroups } from '../config';
 
 const posts = await getSortedPosts();
 const projects = await Promise.all(
@@ -22,10 +23,7 @@ const jsonLd = JSON.stringify({
   name: 'Cameron Bell',
   jobTitle: 'Software Engineer',
   url: Astro.site?.href,
-  sameAs: [
-    'https://github.com/cameronbell',
-    'https://www.linkedin.com/in/cameronbell',
-  ],
+  sameAs: socialGroups.flat().map((link) => link.href).filter((href) => href.startsWith('http')),
 });
 ---
 
@@ -50,15 +48,17 @@ const jsonLd = JSON.stringify({
       <div class="sidebar-spacer"></div>
 
       <div class="sidebar-links">
-        <div class="link-row">
-          <a href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">github</a>
-          <a href="https://www.linkedin.com/in/cameronbell" target="_blank" rel="noopener noreferrer">linkedin</a>
-          <a href="mailto:me@cameronbell.email">email</a>
-        </div>
-        <div class="link-row">
-          <a href="https://hardcover.app/@cameronbell" target="_blank" rel="noopener noreferrer">hardcover</a>
-          <a href="https://letterboxd.com/cameronbell" target="_blank" rel="noopener noreferrer">letterboxd</a>
-        </div>
+        {socialGroups.map((group) => (
+          <div class="link-row">
+            {group.map((link) => (
+              link.href.startsWith('mailto:') ? (
+                <a href={link.href}>{link.label}</a>
+              ) : (
+                <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+              )
+            ))}
+          </div>
+        ))}
       </div>
 
       <p class="sidebar-note">Built with Claude. Writing is my own.</p>
