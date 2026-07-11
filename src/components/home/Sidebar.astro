@@ -1,0 +1,162 @@
+---
+import { site, socialGroups } from '../../config';
+
+// Build-time year: refreshed on every deploy.
+const year = new Date().getFullYear();
+---
+
+<aside class="sidebar">
+  <div class="brand">
+    <h1 class="brand-name">{site.name}</h1>
+    <p class="brand-role">{site.role}</p>
+  </div>
+
+  <p class="sidebar-about">
+    I build backend systems and tools for developers.
+    Mostly Go, more Postgres than I originally planned for,
+    and the occasional Rust detour.
+  </p>
+
+  <div class="sidebar-links">
+    {socialGroups.map((group) => (
+      <div class="link-row">
+        {group.map((link) => (
+          link.href.startsWith('mailto:') ? (
+            <a href={link.href}>{link.label}</a>
+          ) : (
+            <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+          )
+        ))}
+      </div>
+    ))}
+  </div>
+
+  <p class="sidebar-note">Built with Claude. Writing is my own.</p>
+  <div class="sidebar-copyright">© {year} {site.name}</div>
+</aside>
+
+<style>
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 3rem 2rem 3rem 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+  }
+
+  .brand {
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .brand-name {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .brand-role {
+    display: block;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.2;
+  }
+
+  .sidebar-about {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    line-height: 1;
+    margin-top: auto; /* pins links + note + copyright to the bottom of the column */
+    margin-bottom: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .link-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .link-row a {
+    color: var(--faint);
+    transition: color 0.1s;
+    width: fit-content;
+  }
+
+  .link-row a:hover { color: var(--text); }
+
+  .sidebar-note,
+  .sidebar-copyright {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+    line-height: 1.55;
+  }
+
+  .sidebar-note {
+    margin-top: 0.85rem;
+    text-wrap: balance;
+  }
+
+  .sidebar-copyright { margin-top: 0.4rem; }
+
+  /*
+   * Mobile: the sidebar dissolves (display: contents) and its children become
+   * flex items of the page's `.site` column. The `order` values below slot
+   * around `.main { order: 1 }` in index.astro — keep the two files in sync.
+   */
+  @media (max-width: 640px) {
+    .sidebar { display: contents; }
+
+    .brand { padding-top: 2rem; }
+
+    .sidebar-links {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.75rem;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 0;
+    }
+
+    .link-row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+    }
+
+    .sidebar-note {
+      order: 2;
+      margin-top: auto;
+      padding-top: 1.5rem;
+    }
+
+    .sidebar-copyright {
+      order: 3;
+      padding-bottom: 2rem;
+    }
+  }
+</style>

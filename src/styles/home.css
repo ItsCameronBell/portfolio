@@ -1,0 +1,39 @@
+/*
+ * Homepage section furniture, shared by the section components in
+ * src/components/home/. Imported (globally) by pages/index.astro only.
+ */
+
+/* `~` rather than `+`: hoisted component <script> tags can sit between sections. */
+.tab-panel section ~ section { margin-top: 3rem; }
+
+.section-head {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.section-head-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-head-row .section-head { margin-bottom: 0; }
+
+/* The small mono link beside a section head ([rss], [cv.pdf]). */
+.section-link {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--faint);
+  transition: color 0.1s;
+}
+
+.section-link:hover { color: var(--text); }
+
+.empty {
+  font-size: 0.875rem;
+  color: var(--faint);
+  font-style: italic;
+}

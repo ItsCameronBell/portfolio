@@ -24,13 +24,15 @@ export interface CompensationRow {
 export async function getCompensation(): Promise<CompensationRow[]> {
   const experience = await getSortedExperience();
   return experience.flatMap((exp) =>
-    exp.data.roles
-      .filter((role) => role.salary)
-      .map((role) => ({
-        period: role.range ?? exp.data.range,
-        company: exp.data.company,
-        role: role.title,
-        salary: role.salary!,
-      })),
+    exp.data.roles.flatMap((role) =>
+      role.salary
+        ? [{
+            period: role.range ?? exp.data.range,
+            company: exp.data.company,
+            role: role.title,
+            salary: role.salary,
+          }]
+        : [],
+    ),
   );
 }

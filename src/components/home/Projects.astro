@@ -1,0 +1,202 @@
+---
+import { render } from 'astro:content';
+import { getSortedProjects, projectHref, AI_USAGE } from '../../lib/projects';
+
+const projects = await Promise.all(
+  (await getSortedProjects()).map(async (entry) => ({
+    entry,
+    // A project's markdown body, when present, is its AI-usage tooltip.
+    AiNote: entry.body?.trim() ? (await render(entry)).Content : null,
+  })),
+);
+---
+
+<section>
+  <h2 class="section-head">Projects</h2>
+  {projects.length === 0 ? (
+    <p class="empty">Nothing here yet.</p>
+  ) : (
+    <div class="project-list" id="project-list">
+      {projects.map(({ entry: p, AiNote }) => {
+        const href = projectHref(p);
+        const ai = p.data.ai && p.data.ai !== 'none' ? AI_USAGE[p.data.ai] : undefined;
+        const tipId = AiNote ? `ai-tip-${p.id}` : undefined;
+        return (
+          <div class="project-item">
+            <div class="project-head">
+              {href ? (
+                <a class="project-name project-link" href={href} target="_blank" rel="noopener noreferrer">
+                  {p.data.name}
+                </a>
+              ) : (
+                <span class="project-name">{p.data.name}</span>
+              )}
+            </div>
+            <p class="project-desc">{p.data.description}</p>
+            <div class="project-stack">
+              <div class="project-langs">
+                {p.data.stack.map((s) => <span>{s}</span>)}
+              </div>
+              {ai && (
+                <div class="ai">
+                  <span
+                    class="ai-badge"
+                    {...(tipId && { tabindex: 0, 'aria-describedby': tipId })}
+                  >
+                    <span aria-hidden="true">{ai.glyph}</span> {ai.label}
+                  </span>
+                  {AiNote && (
+                    <div class="ai-tip" role="tooltip" id={tipId}>
+                      <div class="ai-tip-inner"><AiNote /></div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )}
+  {projects.length > 0 && (
+    <button class="project-more" hidden aria-expanded="false" aria-controls="project-list"></button>
+  )}
+</section>
+
+<script>
+  import { initProjectListCollapse } from '../../scripts/project-collapse';
+
+  document.addEventListener('astro:page-load', initProjectListCollapse);
+</script>
+
+<style>
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .project-item { display: block; position: relative; }
+
+  .project-item[hidden] { display: none; }
+
+  .project-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .project-more {
+    margin-top: 1.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+
+  .project-more:hover { color: var(--text); }
+
+  .project-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: color 0.1s;
+  }
+
+  .project-link:hover { color: var(--accent); }
+
+  .ai {
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-badge {
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+
+  .ai-badge[tabindex] {
+    cursor: help;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+  }
+
+  .ai-badge:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  .ai-tip {
+    position: absolute;
+    top: 100%;
+    right: -0.25rem;
+    padding-top: 0.4rem;
+    width: max-content;
+    max-width: min(20rem, calc(100vw - 3rem));
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s, visibility 0.1s;
+  }
+
+  .ai:hover .ai-tip,
+  .ai:focus-within .ai-tip {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-tip-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .ai-tip-inner :global(p) { margin: 0; }
+
+  .ai-tip-inner :global(p + p) { margin-top: 0.4em; }
+
+  .ai-tip-inner :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .ai-tip-inner :global(a:hover) { color: var(--accent); }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 0.45rem;
+    max-width: 38rem;
+  }
+
+  .project-stack {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+  }
+
+  .project-langs span + span::before { content: ' · '; }
+</style>

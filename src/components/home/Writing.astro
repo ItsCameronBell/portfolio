@@ -1,0 +1,92 @@
+---
+import { getSortedPosts, formatMonthYear } from '../../lib/posts';
+
+const posts = await getSortedPosts();
+---
+
+<section>
+  <div class="section-head-row">
+    <h2 class="section-head">Writing</h2>
+    <a class="section-link" href="/rss.xml">[rss]</a>
+  </div>
+  {posts.length === 0 ? (
+    <p class="empty">Nothing here yet.</p>
+  ) : (
+    <div class="writing-list">
+      {posts.map((post) => (
+        <a class="writing-item" href={`/posts/${post.id}/`}>
+          <span class="writing-date">{formatMonthYear(post.data.date)}</span>
+          <div>
+            <div class="writing-title">{post.data.title}</div>
+            {post.data.description && (
+              <div class="writing-desc">{post.data.description}</div>
+            )}
+            {post.data.tags && post.data.tags.length > 0 && (
+              <div class="writing-tags">
+                {post.data.tags.map((tag: string) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  )}
+</section>
+
+<style>
+  .writing-list { display: flex; flex-direction: column; }
+
+  .writing-item {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0 1.25rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .writing-item:first-child { border-top: 1px solid var(--border); }
+
+  .writing-item:hover .writing-title { color: var(--accent); }
+
+  .writing-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+    padding-top: 0.2rem;
+    line-height: 1.4;
+  }
+
+  .writing-title {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
+    transition: color 0.1s;
+  }
+
+  .writing-desc {
+    font-size: 0.825rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .writing-tags {
+    margin-top: 0.2rem;
+    font-family: var(--mono);
+    font-size: 0.67rem;
+    color: var(--faint);
+  }
+
+  .tag + .tag { margin-left: 0.35rem; }
+  .tag::before { content: '#'; }
+
+  @media (max-width: 640px) {
+    .writing-item {
+      grid-template-columns: 1fr;
+      gap: 0.1rem 0;
+    }
+
+    .writing-date { padding-top: 0; }
+  }
+</style>
