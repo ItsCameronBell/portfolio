@@ -50,10 +50,15 @@ const jsonLd = JSON.stringify({
       <div class="sidebar-spacer"></div>
 
       <div class="sidebar-links">
-        <a href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">github</a>
-        <a href="https://www.linkedin.com/in/cameronbell" target="_blank" rel="noopener noreferrer">linkedin</a>
-        <a href="mailto:me@cameronbell.email">email</a>
-        <a href="https://hardcover.app/@cameronbell" target="_blank" rel="noopener noreferrer">hardcover</a>
+        <div class="link-row">
+          <a href="https://github.com/cameronbell" target="_blank" rel="noopener noreferrer">github</a>
+          <a href="https://www.linkedin.com/in/cameronbell" target="_blank" rel="noopener noreferrer">linkedin</a>
+          <a href="mailto:me@cameronbell.email">email</a>
+        </div>
+        <div class="link-row">
+          <a href="https://hardcover.app/@cameronbell" target="_blank" rel="noopener noreferrer">hardcover</a>
+          <a href="https://letterboxd.com/cameronbell" target="_blank" rel="noopener noreferrer">letterboxd</a>
+        </div>
       </div>
 
       <p class="sidebar-built">Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> and <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a>. Writing is my own.</p>
@@ -320,7 +325,7 @@ const jsonLd = JSON.stringify({
   .sidebar-links {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.1rem;
     font-family: var(--mono);
     font-size: 0.7rem;
     line-height: 1;
@@ -329,13 +334,19 @@ const jsonLd = JSON.stringify({
     border-top: 1px solid var(--border);
   }
 
-  .sidebar-links a {
+  .link-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .link-row a {
     color: var(--faint);
     transition: color 0.1s;
     width: fit-content;
   }
 
-  .sidebar-links a:hover { color: var(--text); }
+  .link-row a:hover { color: var(--text); }
 
   .sidebar-copyright {
     font-family: var(--mono);
@@ -771,13 +782,19 @@ const jsonLd = JSON.stringify({
     .sidebar-links {
       flex-direction: row;
       flex-wrap: wrap;
-      gap: 0.5rem 1.1rem;
+      gap: 0.5rem 1.75rem;
       margin-top: 0;
       padding-top: 0;
       border-top: none;
       border-bottom: 1px solid var(--border);
       padding-bottom: 1.5rem;
       margin-bottom: 0;
+    }
+
+    .link-row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
     }
 
     .main {
