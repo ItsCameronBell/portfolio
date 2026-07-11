@@ -61,8 +61,14 @@ const jsonLd = JSON.stringify({
         </div>
       </div>
 
-      <p class="sidebar-built">Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> and <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a>. Writing is my own.</p>
-      <p class="sidebar-license">Words <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer license">CC BY-NC-ND</a>, code <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer license">GPL-3.0</a>.</p>
+      <p class="sidebar-built">
+        <span>Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> &amp; <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a>.</span>
+        <span>Writing is my own.</span>
+      </p>
+      <p class="sidebar-license">
+        <span>words: <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer license">CC BY-NC-ND</a></span>
+        <span>code: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer license">GPL-3.0</a></span>
+      </p>
       <div class="sidebar-copyright">© 2026 Cameron Bell</div>
     </aside>
 
@@ -349,23 +355,20 @@ const jsonLd = JSON.stringify({
 
   .link-row a:hover { color: var(--text); }
 
+  .sidebar-built,
+  .sidebar-license,
   .sidebar-copyright {
     font-family: var(--mono);
     font-size: 0.67rem;
     color: var(--faint);
-    margin-top: 0.35rem;
+    line-height: 1.55;
+    margin-top: 0.85rem;
   }
 
-  .sidebar-built,
-  .sidebar-license {
-    font-family: var(--mono);
-    font-size: 0.67rem;
-    color: var(--faint);
-    line-height: 1.5;
-  }
+  .sidebar-built span,
+  .sidebar-license span { display: block; }
 
-  .sidebar-built { margin-top: 0.75rem; }
-  .sidebar-license { margin-top: 0.4rem; }
+  .sidebar-built span { text-wrap: balance; }
 
   .sidebar-built a,
   .sidebar-license a {
