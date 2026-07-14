@@ -1,4 +1,4 @@
-<button class="theme-toggle" aria-label="Toggle theme" transition:persist><span class="glyph" data-fill="right"></span></button>
+<button class="theme-toggle" aria-label="Toggle theme" transition:persist><span class="glyph" data-fill="left"></span></button>
 
 <script>
   declare global {
@@ -9,8 +9,8 @@
 
   const THEMES = ['light', 'dark', 'paper'] as const;
   const FILLS: Record<(typeof THEMES)[number], string> = {
-    light: 'right',
-    dark: 'left',
+    light: 'left',
+    dark: 'right',
     paper: 'bottom',
   };
 
@@ -75,11 +75,10 @@
      ◐ render inconsistently (sometimes near-solid) across browsers/fonts */
   .theme-toggle .glyph {
     position: relative;
-    width: 0.85rem;
-    height: 0.85rem;
+    width: 0.7rem;
+    height: 0.7rem;
     border-radius: 50%;
-    border: 1.5px solid currentColor;
-    box-sizing: border-box;
+    box-shadow: inset 0 0 0 1.25px currentColor;
     overflow: hidden;
   }
 
