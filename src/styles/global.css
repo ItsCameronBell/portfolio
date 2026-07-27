@@ -105,10 +105,33 @@ pre.astro-code span[style*="#E36209" i] {
   --shiki-light: #b45309 !important;
 }
 
+/*
+ * ClientRouter cross-fades the whole document, so mid-navigation the outgoing
+ * page is painted over the incoming one and its text ghosts through the new
+ * header. Drop the old page immediately and fade only the new one in.
+ */
+::view-transition-old(root) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(root) {
+  animation: page-in 180ms ease-out;
+}
+
+@keyframes page-in {
+  from { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition: none !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  /* The universal selector above does not reach view-transition pseudos. */
+  ::view-transition-new(root) {
+    animation: none;
   }
 }
