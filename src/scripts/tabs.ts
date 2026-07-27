@@ -4,6 +4,8 @@ export function initTabs(): void {
   if (btns.length === 0) return;
 
   function activate(tabId: string) {
+    // Kept in step with the inline head script — this is what CSS reads.
+    document.documentElement.dataset['tab'] = tabId;
     btns.forEach((b) => {
       const isTarget = b.dataset['tab'] === tabId;
       b.classList.toggle('active', isTarget);
