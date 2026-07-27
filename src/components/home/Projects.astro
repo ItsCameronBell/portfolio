@@ -1,14 +1,7 @@
 ---
-import { render } from 'astro:content';
-import { getSortedProjects, projectHref, AI_USAGE } from '../../lib/projects';
+import { getSortedProjects, projectHref, projectLinks, AI_USAGE } from '../../lib/projects';
 
-const projects = await Promise.all(
-  (await getSortedProjects()).map(async (entry) => ({
-    entry,
-    // A project's markdown body, when present, is its AI-usage tooltip.
-    AiNote: entry.body?.trim() ? (await render(entry)).Content : null,
-  })),
-);
+const projects = await getSortedProjects();
 ---
 
 <section>
@@ -17,16 +10,21 @@ const projects = await Promise.all(
     <p class="empty">Nothing here yet.</p>
   ) : (
     <div class="project-list" id="project-list">
-      {projects.map(({ entry: p, AiNote }) => {
+      {projects.map((p) => {
         const href = projectHref(p);
         const ai = p.data.ai && p.data.ai !== 'none' ? AI_USAGE[p.data.ai] : undefined;
-        const tipId = AiNote ? `ai-tip-${p.id}` : undefined;
+        const note = p.data.aiNote;
+        const tipId = note ? `ai-tip-${p.id}` : undefined;
+        // One rule everywhere: the name opens the write-up, outbound links
+        // sit in the meta row named after where they actually go.
+        const links = projectLinks(p);
         return (
           <div class="project-item">
             <div class="project-head">
               {href ? (
-                <a class="project-name project-link" href={href} target="_blank" rel="noopener noreferrer">
+                <a class="project-name project-link" href={href}>
                   {p.data.name}
+                  <span class="page-arrow" aria-hidden="true">→</span>
                 </a>
               ) : (
                 <span class="project-name">{p.data.name}</span>
@@ -34,8 +32,15 @@ const projects = await Promise.all(
             </div>
             <p class="project-desc">{p.data.description}</p>
             <div class="project-stack">
-              <div class="project-langs">
-                {p.data.stack.map((s) => <span>{s}</span>)}
+              <div class="project-facts">
+                {p.data.stack.length > 0 && (
+                  <span class="project-langs">{p.data.stack.map((s) => <span>{s}</span>)}</span>
+                )}
+                {links.map((link) => (
+                  <a class="project-ext" href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                ))}
               </div>
               {ai && (
                 <div class="ai">
@@ -45,9 +50,9 @@ const projects = await Promise.all(
                   >
                     <span aria-hidden="true">{ai.glyph}</span> {ai.label}
                   </span>
-                  {AiNote && (
+                  {note && (
                     <div class="ai-tip" role="tooltip" id={tipId}>
-                      <div class="ai-tip-inner"><AiNote /></div>
+                      <div class="ai-tip-inner">{note}</div>
                     </div>
                   )}
                 </div>
@@ -115,6 +120,56 @@ const projects = await Promise.all(
 
   .project-link:hover { color: var(--accent); }
 
+  /* Marks the projects that open a write-up rather than an external repo. */
+  .page-arrow {
+    display: inline-block;
+    margin-left: 0.3rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--faint);
+    transition: color 0.1s, transform 0.1s;
+  }
+
+  .project-link:hover .page-arrow {
+    color: var(--accent);
+    transform: translateX(2px);
+  }
+
+  /*
+   * Outbound links sit outside the stack's dot-list, or a bare "github" reads
+   * as one more technology. A gap separates them; the underline marks them as
+   * links without borrowing the sidebar's column context.
+   */
+  .project-facts {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 1.1rem;
+  }
+
+  /*
+   * Padded past the type's 13px line box so a near-miss can't fall through to
+   * the card's stretched link and navigate somewhere else entirely. The
+   * negative margin keeps the meta row's spacing unchanged.
+   */
+  .project-ext {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 0.55rem 0;
+    margin: -0.55rem 0;
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    transition: color 0.1s, text-decoration-color 0.1s;
+  }
+
+  .project-ext:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
   .ai {
     position: relative;
     z-index: 1;
@@ -168,18 +223,6 @@ const projects = await Promise.all(
     color: var(--muted);
     line-height: 1.55;
   }
-
-  .ai-tip-inner :global(p) { margin: 0; }
-
-  .ai-tip-inner :global(p + p) { margin-top: 0.4em; }
-
-  .ai-tip-inner :global(a) {
-    color: var(--text);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .ai-tip-inner :global(a:hover) { color: var(--accent); }
 
   .project-desc {
     font-size: 0.875rem;

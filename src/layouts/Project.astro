@@ -1,0 +1,189 @@
+---
+import '../styles/prose.css';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Layout from './Layout.astro';
+import { AI_USAGE, type ProjectLink } from '../lib/projects';
+import { site } from '../config';
+
+interface Props {
+  name: string;
+  description: string;
+  links?: ProjectLink[];
+  stack?: string[];
+  year?: string;
+  ai?: 'full' | 'partial' | 'none';
+  aiNote?: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+}
+
+const { name, description, links = [], stack = [], year, ai, aiNote, image, imageAlt } = Astro.props;
+
+const aiUsage = ai && ai !== 'none' ? AI_USAGE[ai] : undefined;
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name,
+  description,
+  url: Astro.url.href,
+  ...(stack.length > 0 && { keywords: stack.join(', ') }),
+  author: {
+    '@type': 'Person',
+    name: site.name,
+    url: Astro.site?.href,
+  },
+});
+---
+
+<Layout title={`${name} — ${site.name}`} description={description} ogType="article">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={jsonLd} />
+  </Fragment>
+  <main id="main" class="page-wrap">
+    <nav class="page-nav">
+      <a href="/">← {site.name}</a>
+    </nav>
+
+    <header class="project-head">
+      <h1 class="project-title">{name}</h1>
+      <p class="project-tagline">{description}</p>
+      <div class="project-meta">
+        <span class="meta-facts">
+          {year && <span>{year}</span>}
+          {stack.map((s) => <span>{s}</span>)}
+        </span>
+        {links.length > 0 && (
+          <span class="meta-links">
+            {links.map((link) => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+            ))}
+          </span>
+        )}
+      </div>
+    </header>
+
+    {image && (
+      <figure class="project-hero">
+        <Image src={image} alt={imageAlt ?? ''} widths={[640, 960, 1280]} sizes="(max-width: 48rem) 100vw, 46rem" loading="eager" />
+      </figure>
+    )}
+
+    <article class="prose">
+      <slot />
+    </article>
+
+    {aiUsage && (
+      <footer class="project-colophon">
+        <span class="colophon-label">
+          <span aria-hidden="true">{aiUsage.glyph}</span> {aiUsage.label}
+        </span>
+        {aiNote && <p>{aiNote}</p>}
+      </footer>
+    )}
+  </main>
+</Layout>
+
+<style>
+  .project-head {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .project-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+    text-wrap: balance;
+  }
+
+  .project-tagline {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 0.85rem;
+    text-wrap: pretty;
+  }
+
+  /*
+   * Facts left, links right — the same split the home page card uses, so
+   * position does the sorting instead of four competing type treatments.
+   */
+  .project-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.35rem 1.5rem;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+  }
+
+  .meta-facts > span + span::before { content: ' · '; }
+
+  .meta-links a {
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    transition: color 0.1s, text-decoration-color 0.1s;
+  }
+
+  .meta-links a:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  .meta-links a + a { margin-left: 0.9rem; }
+
+  /* Provenance reads as a footnote to the work, so it follows the work. */
+  .project-colophon {
+    margin-top: 3.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .colophon-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+  }
+
+  .project-colophon p {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .project-hero { margin: 2.5rem 0; }
+
+  /*
+   * Above 52rem there is room for the hero to break out of the 37rem prose
+   * column without crowding the viewport edge, so it widens to 46rem. Narrower
+   * than that it just fills the column. Deliberately not vw-based: vw includes
+   * the scrollbar, which pushed the bleed past .page-wrap's padding.
+   */
+  @media (min-width: 52rem) {
+    .project-hero {
+      width: 46rem;
+      margin-inline: calc((37rem - 46rem) / 2);
+    }
+  }
+
+  .project-hero :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .prose { margin-top: 2.5rem; }
+
+  .project-hero + .prose { margin-top: 0; }
+</style>

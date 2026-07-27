@@ -14,15 +14,22 @@ const posts = defineCollection({
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
-  schema: z.object({
-    name: z.string(),
-    description: z.string(),
-    repo: z.url().optional(),
-    demo: z.url().optional(),
-    stack: z.array(z.string()).default([]),
-    order: z.number().default(0),
-    ai: z.enum(['full', 'partial', 'none']).optional(),
-  }),
+  // A project's body is its showcase page; entries without one stay
+  // link-only on the home page.
+  schema: ({ image }) =>
+    z.object({
+      name: z.string(),
+      description: z.string(),
+      repo: z.url().optional(),
+      demo: z.url().optional(),
+      stack: z.array(z.string()).default([]),
+      order: z.number().default(0),
+      ai: z.enum(['full', 'partial', 'none']).optional(),
+      aiNote: z.string().optional(),
+      year: z.string().optional(),
+      image: image().optional(),
+      imageAlt: z.string().optional(),
+    }),
 });
 
 const experience = defineCollection({
