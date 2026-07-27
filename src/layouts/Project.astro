@@ -3,7 +3,7 @@ import '../styles/prose.css';
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Layout from './Layout.astro';
-import { AI_USAGE, type ProjectLink } from '../lib/projects';
+import type { ProjectLink } from '../lib/projects';
 import { site } from '../config';
 
 interface Props {
@@ -12,15 +12,11 @@ interface Props {
   links?: ProjectLink[];
   stack?: string[];
   year?: string;
-  ai?: 'full' | 'partial' | 'none';
-  aiNote?: string;
   image?: ImageMetadata;
   imageAlt?: string;
 }
 
-const { name, description, links = [], stack = [], year, ai, aiNote, image, imageAlt } = Astro.props;
-
-const aiUsage = ai && ai !== 'none' ? AI_USAGE[ai] : undefined;
+const { name, description, links = [], stack = [], year, image, imageAlt } = Astro.props;
 
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -73,15 +69,6 @@ const jsonLd = JSON.stringify({
     <article class="prose">
       <slot />
     </article>
-
-    {aiUsage && (
-      <footer class="project-colophon">
-        <span class="colophon-label">
-          <span aria-hidden="true">{aiUsage.glyph}</span> {aiUsage.label}
-        </span>
-        {aiNote && <p>{aiNote}</p>}
-      </footer>
-    )}
   </main>
 </Layout>
 
@@ -138,27 +125,6 @@ const jsonLd = JSON.stringify({
   }
 
   .meta-links a + a { margin-left: 0.9rem; }
-
-  /* Provenance reads as a footnote to the work, so it follows the work. */
-  .project-colophon {
-    margin-top: 3.5rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .colophon-label {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--faint);
-  }
-
-  .project-colophon p {
-    margin-top: 0.3rem;
-    font-size: 0.85rem;
-    color: var(--muted);
-    line-height: 1.6;
-    text-wrap: pretty;
-  }
 
   .project-hero { margin: 2.5rem 0; }
 

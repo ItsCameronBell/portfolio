@@ -24,8 +24,6 @@ const projects = defineCollection({
       demo: z.url().optional(),
       stack: z.array(z.string()).default([]),
       order: z.number().default(0),
-      ai: z.enum(['full', 'partial', 'none']).optional(),
-      aiNote: z.string().optional(),
       year: z.string().optional(),
       image: image().optional(),
       imageAlt: z.string().optional(),

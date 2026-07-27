@@ -47,8 +47,3 @@ export function projectLinks(project: Project): ProjectLink[] {
   if (project.data.demo) links.push({ label: 'demo', href: project.data.demo });
   return links;
 }
-
-export const AI_USAGE = {
-  full: { glyph: '●', label: 'built with ai' },
-  partial: { glyph: '◐', label: 'ai-assisted' },
-} as const;

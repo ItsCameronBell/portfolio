@@ -1,5 +1,5 @@
 ---
-import { getSortedProjects, projectHref, projectLinks, AI_USAGE } from '../../lib/projects';
+import { getSortedProjects, projectHref, projectLinks } from '../../lib/projects';
 
 const projects = await getSortedProjects();
 ---
@@ -12,9 +12,6 @@ const projects = await getSortedProjects();
     <div class="project-list" id="project-list">
       {projects.map((p) => {
         const href = projectHref(p);
-        const ai = p.data.ai && p.data.ai !== 'none' ? AI_USAGE[p.data.ai] : undefined;
-        const note = p.data.aiNote;
-        const tipId = note ? `ai-tip-${p.id}` : undefined;
         // One rule everywhere: the name opens the write-up, outbound links
         // sit in the meta row named after where they actually go.
         const links = projectLinks(p);
@@ -32,31 +29,14 @@ const projects = await getSortedProjects();
             </div>
             <p class="project-desc">{p.data.description}</p>
             <div class="project-stack">
-              <div class="project-facts">
-                {p.data.stack.length > 0 && (
-                  <span class="project-langs">{p.data.stack.map((s) => <span>{s}</span>)}</span>
-                )}
-                {links.map((link) => (
-                  <a class="project-ext" href={link.href} target="_blank" rel="noopener noreferrer">
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-              {ai && (
-                <div class="ai">
-                  <span
-                    class="ai-badge"
-                    {...(tipId && { tabindex: 0, 'aria-describedby': tipId })}
-                  >
-                    <span aria-hidden="true">{ai.glyph}</span> {ai.label}
-                  </span>
-                  {note && (
-                    <div class="ai-tip" role="tooltip" id={tipId}>
-                      <div class="ai-tip-inner">{note}</div>
-                    </div>
-                  )}
-                </div>
+              {p.data.stack.length > 0 && (
+                <span class="project-langs">{p.data.stack.map((s) => <span>{s}</span>)}</span>
               )}
+              {links.map((link) => (
+                <a class="project-ext" href={link.href} target="_blank" rel="noopener noreferrer">
+                  {link.label}
+                </a>
+              ))}
             </div>
           </div>
         );
@@ -137,18 +117,6 @@ const projects = await getSortedProjects();
   }
 
   /*
-   * Outbound links sit outside the stack's dot-list, or a bare "github" reads
-   * as one more technology. A gap separates them; the underline marks them as
-   * links without borrowing the sidebar's column context.
-   */
-  .project-facts {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0 1.1rem;
-  }
-
-  /*
    * Padded past the type's 13px line box so a near-miss can't fall through to
    * the card's stretched link and navigate somewhere else entirely. The
    * negative margin keeps the meta row's spacing unchanged.
@@ -170,60 +138,6 @@ const projects = await getSortedProjects();
     text-decoration-color: var(--accent);
   }
 
-  .ai {
-    position: relative;
-    z-index: 1;
-  }
-
-  .ai-badge {
-    font-family: var(--mono);
-    font-size: 0.67rem;
-    color: var(--faint);
-    white-space: nowrap;
-  }
-
-  .ai-badge[tabindex] {
-    cursor: help;
-    text-decoration: underline dotted;
-    text-underline-offset: 2px;
-  }
-
-  .ai-badge:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: 1px;
-  }
-
-  .ai-tip {
-    position: absolute;
-    top: 100%;
-    right: -0.25rem;
-    padding-top: 0.4rem;
-    width: max-content;
-    max-width: min(20rem, calc(100vw - 3rem));
-    z-index: 10;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.1s, visibility 0.1s;
-  }
-
-  .ai:hover .ai-tip,
-  .ai:focus-within .ai-tip {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .ai-tip-inner {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 0.5rem 0.7rem;
-    font-family: var(--font);
-    font-size: 0.78rem;
-    color: var(--muted);
-    line-height: 1.55;
-  }
-
   .project-desc {
     font-size: 0.875rem;
     color: var(--muted);
@@ -232,11 +146,16 @@ const projects = await getSortedProjects();
     max-width: 38rem;
   }
 
+  /*
+   * Outbound links sit outside the stack's dot-list, or a bare "github" reads
+   * as one more technology. A gap separates them; the underline marks them as
+   * links without borrowing the sidebar's column context.
+   */
   .project-stack {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0 1.1rem;
     font-family: var(--mono);
     font-size: 0.67rem;
     color: var(--faint);

@@ -16,7 +16,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const { name, description, stack, year, ai, aiNote, image, imageAlt } = project.data;
+const { name, description, stack, year, image, imageAlt } = project.data;
 const links = projectLinks(project);
 ---
 
@@ -26,8 +26,6 @@ const links = projectLinks(project);
   links={links}
   stack={stack}
   year={year}
-  ai={ai}
-  aiNote={aiNote}
   image={image}
   imageAlt={imageAlt}
 >
