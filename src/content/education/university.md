@@ -1,6 +1,6 @@
 ---
 degree: BSc Computer Science
-institution: "[University]"
-range: "2015–19"
+institution: "University of Strathclyde, Glasgow"
+range: "2020 – 2024"
 order: 0
 ---

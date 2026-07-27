@@ -1,5 +1,5 @@
 ---
-import { getSortedExperience, getSortedEducation, getCompensation } from '../../lib/cv';
+import { getSortedExperience, getSortedEducation, getCompensation, formatRange } from '../../lib/cv';
 
 const experience = await getSortedExperience();
 const education = await getSortedEducation();
@@ -9,7 +9,7 @@ const compensation = await getCompensation();
 <section>
   <div class="section-head-row">
     <h2 class="section-head">Experience</h2>
-    <a class="section-link" href="/cv.pdf" download="cameron-bell-cv.pdf">[cv.pdf]</a>
+    <a class="section-link" href="/cv.pdf" download="cameron-bell-cv.pdf">cv.pdf</a>
   </div>
   {experience.length === 0 ? (
     <p class="empty">Nothing here yet.</p>
@@ -17,7 +17,7 @@ const compensation = await getCompensation();
     <div class="cv-list">
       {experience.map((exp) => (
         <div class="cv-item">
-          <span class="cv-date">{exp.data.range}</span>
+          <span class="cv-date">{formatRange(exp.data.start, exp.data.end)}</span>
           <div class="cv-body">
             {exp.data.url ? (
               <a class="cv-org" href={exp.data.url} target="_blank" rel="noopener noreferrer">{exp.data.company}</a>
@@ -27,7 +27,7 @@ const compensation = await getCompensation();
             <div class="cv-roles">
               {exp.data.roles.map((role) => (
                 <div class="cv-role-entry">
-                  {role.range && <span class="cv-role-date">{role.range}</span>}
+                  {role.start && <span class="cv-role-date">{formatRange(role.start, role.end)}</span>}
                   <span class="cv-role">{role.title}</span>
                 </div>
               ))}
@@ -96,9 +96,15 @@ const compensation = await getCompensation();
     gap: 1.6rem;
   }
 
+  /*
+   * Sized to the widest range the format can produce — a cross-year
+   * "Sep 2024 – Mar 2025" measures 8.01rem here, so the track holds 8.25rem
+   * and no date ever wraps. Education keeps year-only ranges but shares the
+   * measurement, or the two sections' rails would not line up down the page.
+   */
   .cv-item {
     display: grid;
-    grid-template-columns: 5.5rem 1fr;
+    grid-template-columns: 8.25rem 1fr;
     gap: 0 1.25rem;
   }
 
@@ -140,7 +146,7 @@ const compensation = await getCompensation();
     font-size: 0.67rem;
     color: var(--faint);
     flex-shrink: 0;
-    min-width: 3.75rem;
+    min-width: 6rem;
   }
 
   .cv-role {
@@ -157,7 +163,7 @@ const compensation = await getCompensation();
 
   .edu {
     display: grid;
-    grid-template-columns: 5.5rem 1fr;
+    grid-template-columns: 8.25rem 1fr;
     gap: 0 1.25rem;
   }
 
