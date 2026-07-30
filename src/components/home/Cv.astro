@@ -71,7 +71,7 @@ const compensation = await getCompensation();
         <th scope="col">Period</th>
         <th scope="col">Company</th>
         <th scope="col">Role</th>
-        <th scope="col">Base</th>
+        <th scope="col">Gross Salary</th>
       </tr>
     </thead>
     <tbody>
@@ -86,7 +86,7 @@ const compensation = await getCompensation();
     </tbody>
   </table>
   </div>
-  <p class="comp-note">Base salary only. I share this because I think salary transparency is worth something.</p>
+  <p class="comp-note">Sharing my <span class="comp-note-strong">Gross Salary</span> is important to me.</p>
 </section>
 
 <style>
@@ -241,6 +241,11 @@ const compensation = await getCompensation();
     font-size: 0.78rem;
     color: var(--faint);
     font-style: italic;
+  }
+
+  .comp-note-strong {
+    font-weight: 600;
+    font-style: normal;
   }
 
   @media (max-width: 640px) {
