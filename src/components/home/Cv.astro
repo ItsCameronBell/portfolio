@@ -198,8 +198,15 @@ const compensation = await getCompensation();
     -webkit-overflow-scrolling: touch;
   }
 
+  /*
+   * The min-width is what makes .comp-scroll's overflow-x mean anything:
+   * width:100% alone let the table crush itself to any container, wrapping
+   * "Sep 2025 – now" over five lines on a phone rather than scrolling. 32rem
+   * clears the 31.45rem the four columns need at this size.
+   */
   .comp-table {
     width: 100%;
+    min-width: 32rem;
     border-collapse: collapse;
     font-size: 0.82rem;
   }
