@@ -1,5 +1,5 @@
 ---
-import { getSortedProjects, projectHref, projectLinks } from '../../lib/projects';
+import { getSortedProjects, projectHref } from '../../lib/projects';
 
 const projects = await getSortedProjects();
 ---
@@ -12,16 +12,12 @@ const projects = await getSortedProjects();
     <div class="project-list" id="project-list">
       {projects.map((p) => {
         const href = projectHref(p);
-        // One rule everywhere: the name opens the write-up, outbound links
-        // sit in the meta row named after where they actually go.
-        const links = projectLinks(p);
         return (
           <div class="project-item">
             <div class="project-head">
               {href ? (
-                <a class="project-name project-link" href={href}>
+                <a class="project-name project-link" href={href} target="_blank" rel="noopener noreferrer">
                   {p.data.name}
-                  <span class="page-arrow" aria-hidden="true">→</span>
                 </a>
               ) : (
                 <span class="project-name">{p.data.name}</span>
@@ -29,14 +25,9 @@ const projects = await getSortedProjects();
             </div>
             <p class="project-desc">{p.data.description}</p>
             <div class="project-stack">
-              {p.data.stack.length > 0 && (
-                <span class="project-langs">{p.data.stack.map((s) => <span>{s}</span>)}</span>
-              )}
-              {links.map((link) => (
-                <a class="project-ext" href={link.href} target="_blank" rel="noopener noreferrer">
-                  {link.label}
-                </a>
-              ))}
+              <div class="project-langs">
+                {p.data.stack.map((s) => <span>{s}</span>)}
+              </div>
             </div>
           </div>
         );
@@ -100,44 +91,6 @@ const projects = await getSortedProjects();
 
   .project-link:hover { color: var(--accent); }
 
-  /* Marks the projects that open a write-up rather than an external repo. */
-  .page-arrow {
-    display: inline-block;
-    margin-left: 0.3rem;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    font-weight: 400;
-    color: var(--faint);
-    transition: color 0.1s, transform 0.1s;
-  }
-
-  .project-link:hover .page-arrow {
-    color: var(--accent);
-    transform: translateX(2px);
-  }
-
-  /*
-   * Padded past the type's 13px line box so a near-miss can't fall through to
-   * the card's stretched link and navigate somewhere else entirely. The
-   * negative margin keeps the meta row's spacing unchanged.
-   */
-  .project-ext {
-    position: relative;
-    z-index: 1;
-    display: inline-block;
-    padding: 0.55rem 0;
-    margin: -0.55rem 0;
-    text-decoration: underline;
-    text-decoration-color: var(--border);
-    text-underline-offset: 3px;
-    transition: color 0.1s, text-decoration-color 0.1s;
-  }
-
-  .project-ext:hover {
-    color: var(--accent);
-    text-decoration-color: var(--accent);
-  }
-
   .project-desc {
     font-size: 0.875rem;
     color: var(--muted);
@@ -146,16 +99,11 @@ const projects = await getSortedProjects();
     max-width: 38rem;
   }
 
-  /*
-   * Outbound links sit outside the stack's dot-list, or a bare "github" reads
-   * as one more technology. A gap separates them; the underline marks them as
-   * links without borrowing the sidebar's column context.
-   */
   .project-stack {
     display: flex;
     align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0 1.1rem;
+    justify-content: space-between;
+    gap: 0.75rem;
     font-family: var(--mono);
     font-size: 0.67rem;
     color: var(--faint);
