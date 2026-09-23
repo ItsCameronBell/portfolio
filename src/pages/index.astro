@@ -2,7 +2,6 @@
 import '../styles/home.css';
 import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/home/Sidebar.astro';
-import Projects from '../components/home/Projects.astro';
 import Writing from '../components/home/Writing.astro';
 import Cv from '../components/home/Cv.astro';
 import { site, links } from '../config';
@@ -63,7 +62,6 @@ const jsonLd = JSON.stringify({
 
       <div class="tab-panel active" id="tab-work" role="tabpanel" aria-labelledby="tab-btn-work" tabindex="0">
         <Writing />
-        <Projects />
       </div>
 
       <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv" tabindex="0">

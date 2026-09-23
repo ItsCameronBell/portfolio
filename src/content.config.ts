@@ -12,18 +12,6 @@ const posts = defineCollection({
   }),
 });
 
-const projects = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
-  schema: z.object({
-    name: z.string(),
-    description: z.string(),
-    repo: z.url().optional(),
-    demo: z.url().optional(),
-    stack: z.array(z.string()).default([]),
-    order: z.number().default(0),
-  }),
-});
-
 /*
  * Tenure is stored to the month so a six-month stint reads as one. Quoted in
  * frontmatter because bare YYYY-MM-DD would parse as a YAML timestamp, and a
@@ -67,4 +55,4 @@ const education = defineCollection({
   }),
 });
 
-export const collections = { posts, projects, experience, education };
+export const collections = { posts, experience, education };

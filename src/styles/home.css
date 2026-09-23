@@ -4,8 +4,8 @@
  */
 
 /*
- * One rail for every list on the page (writing dates, project stacks, CV
- * ranges), so content starts at the same x on both tabs and switching tabs
+ * One rail for every list on the page (writing dates, CV ranges), so
+ * content starts at the same x on both tabs and switching tabs
  * never shifts the text sideways. Sized to the widest thing it holds: a
  * cross-year "Sep 2024 – Mar 2025" measures 8.01rem in the mono face.
  */

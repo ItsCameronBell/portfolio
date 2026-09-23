@@ -13,12 +13,12 @@ No `node`/`npx` on PATH by default; node is asdf-managed:
 
 ```bash
 export PATH="$HOME/.asdf/shims:$PATH"
-node_modules/.bin/astro build          # "posts/projects is empty" warnings are normal — content dirs ship empty
+node_modules/.bin/astro build          # "posts is empty" warnings are normal — the posts dir ships empty
 node_modules/.bin/astro preview --port 4173   # serves dist/
 ```
 
-Content collections are empty by design. To exercise project/post rendering,
-drop a temporary `.md` into `src/content/projects/` or `src/content/posts/`
+Content collections are empty by design. To exercise post rendering,
+drop a temporary `.md` into `src/content/posts/`
 (schemas in `src/content.config.ts`), build, verify, then delete it.
 
 ## Drive & screenshot
@@ -48,7 +48,7 @@ Gotchas:
 ## Worth driving
 
 - Homepage tabs (work/cv): click, arrow-key roving focus, `#hash` restore.
-- Project cards: whole card clickable via stretched name-link; AI badge
-  tooltip on hover and Tab-focus (links inside must stay reachable).
-- "Show more" collapse past 4 projects.
+- Writing rows: whole row links to the post; dates sit in the shared rail.
+- CV: linked employers and university show a `↗`; the current role's length
+  is recounted in the browser (fake `Date` to check it moves).
 - All three themes; `--faint` text must never sit on `--surface`.
