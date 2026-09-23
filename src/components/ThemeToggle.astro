@@ -3,7 +3,7 @@
 <script>
   declare global {
     interface Window {
-      __setFavicon?: (theme: string) => void;
+      __setThemeChrome?: (theme: string) => void;
     }
   }
 
@@ -22,7 +22,7 @@
   }
 
   function reflectTheme(theme: string) {
-    window.__setFavicon?.(theme);
+    window.__setThemeChrome?.(theme);
     if (!btn || !glyph) return;
     glyph.dataset.fill = FILLS[theme as (typeof THEMES)[number]] ?? 'right';
     btn.setAttribute('aria-label', `Switch to ${nextOf(theme)} theme`);

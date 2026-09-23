@@ -37,7 +37,12 @@
   --surface: #efe6d3;
 }
 
+/*
+ * The background goes on html as well as body: html is the canvas browsers
+ * paint past the page's edges (overscroll bounce, in-app browser gaps).
+ */
 html {
+  background: var(--bg);
   color-scheme: light;
   -webkit-tap-highlight-color: transparent;
 }

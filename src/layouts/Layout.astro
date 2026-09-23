@@ -41,10 +41,19 @@ const {
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <!--
+      Tints browser chrome and overscroll (Safari, and in-app browsers that
+      honour it) to the page background. These defaults cover no-JS; the theme
+      script below overwrites both with the chosen theme's colour.
+    -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)" />
     <ClientRouter />
     <script is:inline>
       (function () {
         var FAVICON_FILL = { light: '#141414', dark: '#f2f2f2', paper: '#f6f1e6' };
+        // Keep in step with --bg in global.css.
+        var BACKGROUND = { light: '#ffffff', dark: '#0f0f0f', paper: '#f6f1e6' };
         var PAPER_RING = '<circle cx="16" cy="16" r="13" fill="none" stroke="#b7a679" stroke-width="1.25"/>';
 
         function faviconHref(theme) {
@@ -54,18 +63,23 @@ const {
           return 'data:image/svg+xml,' + encodeURIComponent(svg);
         }
 
-        function setFavicon(theme) {
+        /* Everything outside the page that should follow the theme: favicon and theme-color. */
+        function setThemeChrome(theme) {
           var link = document.querySelector('link[rel="icon"][type="image/svg+xml"]');
           if (link) link.href = faviconHref(theme);
+          var bg = BACKGROUND[theme] || BACKGROUND.light;
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+            meta.setAttribute('content', bg);
+          });
         }
-        window.__setFavicon = setFavicon;
+        window.__setThemeChrome = setThemeChrome;
 
         function applyTheme() {
           const saved = localStorage.getItem('theme');
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           const theme = saved ?? (prefersDark ? 'dark' : 'light');
           document.documentElement.setAttribute('data-theme', theme);
-          setFavicon(theme);
+          setThemeChrome(theme);
         }
 
         applyTheme();
