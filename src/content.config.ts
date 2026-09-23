@@ -37,6 +37,7 @@ const experience = defineCollection({
           // Only worth setting when a role covers part of the company's span.
           start: month.optional(),
           end: month.optional(),
+          // Not shown on the site since the pay table went; kept so it can return.
           salary: z.string().optional(),
         }),
       )

@@ -19,28 +19,6 @@ const jsonLd = JSON.stringify({
 <Layout>
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={jsonLd} />
-    <!--
-      Resolves the tab from the hash before anything paints. The tab elements
-      do not exist yet at this point, so the answer goes on <html> for CSS to
-      act on — the same trick the theme script uses one block up.
-    -->
-    <script is:inline>
-      (function () {
-        var TABS = ['work', 'cv'];
-
-        function applyTab() {
-          var hash = location.hash.slice(1);
-          document.documentElement.dataset.tab =
-            TABS.indexOf(hash) > -1 ? hash : TABS[0];
-        }
-
-        applyTab();
-        if (!window.__tabSwapBound) {
-          window.__tabSwapBound = true;
-          document.addEventListener('astro:after-swap', applyTab);
-        }
-      })();
-    </script>
   </Fragment>
   <div class="site">
 
@@ -48,34 +26,12 @@ const jsonLd = JSON.stringify({
 
     <main id="main" class="main">
 
-      <div class="tab-bar" role="tablist" aria-label="Sections">
-        <button class="tab-btn active" id="tab-btn-work" data-tab="work" role="tab" aria-selected="true" aria-controls="tab-work">work</button>
-        <button class="tab-btn" id="tab-btn-cv" data-tab="cv" role="tab" aria-selected="false" aria-controls="tab-cv" tabindex="-1">cv</button>
-      </div>
-      <noscript>
-        <style>
-          .tab-bar { display: none; }
-          .tab-panel { display: block !important; }
-          .tab-panel + .tab-panel { margin-top: 3rem; }
-        </style>
-      </noscript>
-
-      <div class="tab-panel active" id="tab-work" role="tabpanel" aria-labelledby="tab-btn-work" tabindex="0">
-        <Writing />
-      </div>
-
-      <div class="tab-panel" id="tab-cv" role="tabpanel" aria-labelledby="tab-btn-cv" tabindex="0">
-        <Cv />
-      </div>
+      <Cv />
+      <Writing />
 
     </main>
   </div>
 
-  <script>
-    import { initTabs } from '../scripts/tabs';
-
-    document.addEventListener('astro:page-load', initTabs);
-  </script>
 </Layout>
 
 <style>
@@ -90,48 +46,6 @@ const jsonLd = JSON.stringify({
   }
 
   .main { padding: 3rem 0 4rem; }
-
-  .tab-bar {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .tab-btn {
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    color: var(--muted);
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: color 0.1s;
-  }
-
-  .tab-btn:not(.active):hover { color: var(--text); }
-
-  /*
-   * data-tab on <html> decides what shows, not the .active class: the
-   * attribute is set in the head before first paint, whereas the class is
-   * toggled after hydration, which is what made a refresh of /#cv paint the
-   * work tab and then cut across to the cv one.
-   *
-   * The :not([data-tab]) rules keep the server-rendered default standing if
-   * that script never runs. .active is still maintained for aria and :hover.
-   */
-  :root:not([data-tab]) .tab-btn.active,
-  :root[data-tab='work'] #tab-btn-work,
-  :root[data-tab='cv'] #tab-btn-cv {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .tab-panel { display: none; }
-
-  :root:not([data-tab]) .tab-panel.active,
-  :root[data-tab='work'] #tab-work,
-  :root[data-tab='cv'] #tab-cv { display: block; }
 
   /*
    * Mobile: Sidebar.astro dissolves itself with `display: contents`, so its

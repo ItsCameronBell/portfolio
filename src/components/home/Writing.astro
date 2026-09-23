@@ -4,86 +4,34 @@ import { getSortedPosts, formatMonthYear } from '../../lib/posts';
 const posts = await getSortedPosts();
 ---
 
-<section>
-  <h2 class="section-head">Writing</h2>
-  {posts.length === 0 ? (
-    <p class="empty">Nothing here yet.</p>
-  ) : (
-    <div class="writing-list">
+{/* Hidden until the first post exists, so the page never opens on an empty section. Tags live on the post page. */}
+{posts.length > 0 && (
+  <section id="writing">
+    <h2 class="section-head">Writing</h2>
+    <div class="entry-list">
       {posts.map((post) => (
-        <a class="writing-item" href={`/posts/${post.id}/`}>
-          <span class="writing-date">{formatMonthYear(post.data.date)}</span>
+        <a class="entry" href={`/posts/${post.id}/`}>
+          <span class="entry-meta">{formatMonthYear(post.data.date)}</span>
           <div>
-            <div class="writing-title">{post.data.title}</div>
-            {post.data.description && (
-              <div class="writing-desc">{post.data.description}</div>
-            )}
-            {post.data.tags && post.data.tags.length > 0 && (
-              <div class="writing-tags">
-                {post.data.tags.map((tag: string) => (
-                  <span class="tag">{tag}</span>
-                ))}
-              </div>
-            )}
+            <span class="entry-title">{post.data.title}</span>
+            {post.data.description && <span class="entry-detail">{post.data.description}</span>}
           </div>
         </a>
       ))}
     </div>
-  )}
-</section>
+  </section>
+)}
 
 <style>
-  .writing-list { display: flex; flex-direction: column; }
-
-  .writing-item {
-    display: grid;
-    grid-template-columns: var(--rail) 1fr;
-    gap: 0 1.25rem;
-    padding: 0.9rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .writing-item:first-child { border-top: 1px solid var(--border); }
-
-  .writing-item:hover .writing-title { color: var(--accent); }
-
-  .writing-date {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--faint);
-    padding-top: 0.2rem;
-    line-height: 1.4;
-  }
-
-  .writing-title {
-    font-size: 1rem;
-    line-height: 1.4;
-    margin-bottom: 0.2rem;
-    transition: color 0.1s;
-  }
-
-  .writing-desc {
-    font-size: 0.825rem;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-
-  .writing-tags {
-    margin-top: 0.2rem;
-    font-family: var(--mono);
-    font-size: 0.67rem;
-    color: var(--faint);
-  }
-
-  .tag + .tag { margin-left: 0.35rem; }
-  .tag::before { content: '#'; }
-
-  @media (max-width: 640px) {
-    .writing-item {
-      grid-template-columns: 1fr;
-      gap: 0.1rem 0;
-    }
-
-    .writing-date { padding-top: 0; }
+  /*
+   * A rule across the column between the CV and the writing. Its gap below
+   * matches the section gap above it.
+   */
+  #writing::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 2.5rem;
   }
 </style>

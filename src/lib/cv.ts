@@ -36,28 +36,3 @@ export function formatRange(start: string, end?: string): string {
     ? `${fromMonth} – ${toMonth} ${toYear}`
     : `${fromMonth} ${fromYear} – ${toMonth} ${toYear}`;
 }
-
-export interface CompensationRow {
-  period: string;
-  company: string;
-  role: string;
-  salary: string;
-}
-
-export async function getCompensation(): Promise<CompensationRow[]> {
-  const experience = await getSortedExperience();
-  return experience.flatMap((exp) =>
-    exp.data.roles.flatMap((role) =>
-      role.salary
-        ? [{
-            period: role.start
-              ? formatRange(role.start, role.end)
-              : formatRange(exp.data.start, exp.data.end),
-            company: exp.data.company,
-            role: role.title,
-            salary: role.salary,
-          }]
-        : [],
-    ),
-  );
-}

@@ -4,15 +4,14 @@
  */
 
 /*
- * One rail for every list on the page (writing dates, CV ranges), so
- * content starts at the same x on both tabs and switching tabs
- * never shifts the text sideways. Sized to the widest thing it holds: a
- * cross-year "Sep 2024 – Mar 2025" measures 8.01rem in the mono face.
+ * One rail for every list on the page (CV ranges, writing dates), so all
+ * entries start at the same x down the page. Sized to the widest thing it
+ * holds: a cross-year "Sep 2024 – Mar 2025" measures 8.01rem in the mono face.
  */
 :root { --rail: 8.25rem; }
 
 /* `~` rather than `+`: hoisted component <script> tags can sit between sections. */
-.tab-panel section ~ section { margin-top: 3rem; }
+.main section ~ section { margin-top: 2.5rem; }
 
 .section-head {
   font-size: 0.875rem;
@@ -21,33 +20,91 @@
   margin-bottom: 1rem;
 }
 
-.section-head-row {
+/*
+ * One entry shape for every list on the page: meta in the rail (a date, and
+ * under it a length where there is one), then a title line over a detail
+ * line. Same spacing, no rules, so no section reads differently from another.
+ */
+.entry-list {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 1rem;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.section-head-row .section-head { margin-bottom: 0; }
+.entry {
+  display: grid;
+  grid-template-columns: var(--rail) 1fr;
+  gap: 0 1.25rem;
+  align-items: baseline;
+}
 
-/* The small mono link beside a section head (rss, cv.pdf). */
-.section-link {
+/*
+ * Meta lines take the line boxes of the lines they sit beside: the first the
+ * title's (1rem × 1.4), the second the detail's (0.825rem × 1.5).
+ */
+.entry-meta {
+  display: flex;
+  flex-direction: column;
   font-family: var(--mono);
   font-size: 0.7rem;
+  line-height: 1.4rem;
   color: var(--faint);
-  text-decoration: underline;
-  text-decoration-color: var(--border);
-  text-underline-offset: 3px;
-  transition: color 0.1s, text-decoration-color 0.1s;
+  white-space: nowrap;
 }
 
-.section-link:hover {
+.entry-meta > * + * { line-height: 1.2375rem; }
+
+.entry-title {
+  display: block;
+  width: fit-content;
+  font-size: 1rem;
+  line-height: 1.4;
   color: var(--text);
-  text-decoration-color: var(--faint);
+  transition: color 0.1s;
 }
 
-.empty {
-  font-size: 0.875rem;
+.entry-detail {
+  display: block;
+  width: fit-content;
+  font-size: 0.825rem;
+  line-height: 1.5;
+  color: var(--muted);
+  transition: color 0.1s;
+}
+
+/* Only entries with a url get the arrow; a plain name means there is no site to visit. */
+.entry-arrow {
+  position: relative;
+  top: -0.3em; /* the mono glyph sits on the baseline; lift it toward cap height */
+  margin-left: 0.25em;
+  font-family: var(--mono);
+  font-size: 0.8em;
   color: var(--faint);
-  font-style: italic;
+  transition: color 0.1s;
+}
+
+a.entry:hover .entry-title,
+a.entry-title:hover,
+a.entry-detail:hover,
+a.entry-title:hover .entry-arrow,
+a.entry-detail:hover .entry-arrow { color: var(--accent); }
+
+/* Phone: no rail; the meta runs along one line above the entry. */
+@media (max-width: 640px) {
+  .entry-list { gap: 1.1rem; }
+
+  .entry {
+    grid-template-columns: 1fr;
+    gap: 0.1rem 0;
+  }
+
+  .entry-meta,
+  .entry-meta > * + * {
+    line-height: 1.4;
+  }
+
+  .entry-meta {
+    flex-direction: row;
+    gap: 0 1rem;
+  }
 }

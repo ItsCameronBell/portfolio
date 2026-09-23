@@ -47,7 +47,8 @@ Gotchas:
 
 ## Worth driving
 
-- Homepage tabs (work/cv): click, arrow-key roving focus, `#hash` restore.
+- Home is one page, no tabs: Experience, Education, then Writing (absent
+  until a post exists). `/#cv` should land on Experience.
 - Writing rows: whole row links to the post; dates sit in the shared rail.
 - CV: linked employers and university show a `↗`; the current role's length
   is recounted in the browser (fake `Date` to check it moves).
