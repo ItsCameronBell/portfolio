@@ -111,12 +111,14 @@ const compensation = await getCompensation();
     line-height: 1.4;
   }
 
+  /* Primary and secondary lines match the writing and project rows. */
   .cv-org {
-    display: inline-block;
-    font-size: 0.875rem;
+    display: block;
+    width: fit-content;
+    font-size: 1rem;
     color: var(--text);
-    line-height: 1.35;
-    margin-bottom: 0.3rem;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
   }
 
   a.cv-org:hover {
@@ -145,9 +147,9 @@ const compensation = await getCompensation();
   }
 
   .cv-role {
-    font-size: 0.82rem;
+    font-size: 0.825rem;
     color: var(--muted);
-    line-height: 1.4;
+    line-height: 1.5;
   }
 
   .edu-list {
@@ -171,16 +173,19 @@ const compensation = await getCompensation();
   }
 
   .edu-degree {
-    font-size: 0.875rem;
+    font-size: 1rem;
     color: var(--text);
-    line-height: 1.35;
-    margin-bottom: 0.15rem;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
   }
 
+  /* Block, or the inline span sits in a 1.7 line box and drifts from its degree. */
   .edu-org {
-    font-size: 0.82rem;
+    display: block;
+    width: fit-content;
+    font-size: 0.825rem;
     color: var(--muted);
-    line-height: 1.4;
+    line-height: 1.5;
   }
 
   a.edu-org:hover {
@@ -214,6 +219,19 @@ const compensation = await getCompensation();
     text-align: left;
     padding: 0 1rem 0.6rem 0;
     border-bottom: 1px solid var(--border);
+  }
+
+  /*
+   * The period column spans the rail plus its gap, so Company lines up with
+   * the lists above. Desktop only: on a phone the lists stack and there is no
+   * rail to meet, and the extra width would squeeze the other columns.
+   */
+  @media (min-width: 641px) {
+    .comp-table th:first-child,
+    .comp-table td:first-child {
+      width: calc(var(--rail) + 1.25rem);
+      padding-right: 1.25rem;
+    }
   }
 
   .comp-table td {
