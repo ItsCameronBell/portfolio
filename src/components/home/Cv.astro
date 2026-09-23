@@ -96,15 +96,10 @@ const compensation = await getCompensation();
     gap: 1.6rem;
   }
 
-  /*
-   * Sized to the widest range the format can produce — a cross-year
-   * "Sep 2024 – Mar 2025" measures 8.01rem here, so the track holds 8.25rem
-   * and no date ever wraps. Education keeps year-only ranges but shares the
-   * measurement, or the two sections' rails would not line up down the page.
-   */
+  /* --rail (home.css) is sized so the widest range never wraps. */
   .cv-item {
     display: grid;
-    grid-template-columns: 8.25rem 1fr;
+    grid-template-columns: var(--rail) 1fr;
     gap: 0 1.25rem;
   }
 
@@ -163,7 +158,7 @@ const compensation = await getCompensation();
 
   .edu {
     display: grid;
-    grid-template-columns: 8.25rem 1fr;
+    grid-template-columns: var(--rail) 1fr;
     gap: 0 1.25rem;
   }
 

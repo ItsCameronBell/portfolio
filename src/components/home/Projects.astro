@@ -14,7 +14,10 @@ const projects = await getSortedProjects();
         const href = projectHref(p);
         return (
           <div class="project-item">
-            <div class="project-head">
+            <ul class="project-stack" aria-label="Built with">
+              {p.data.stack.map((s) => <li>{s}</li>)}
+            </ul>
+            <div>
               {href ? (
                 <a class="project-name project-link" href={href} target="_blank" rel="noopener noreferrer">
                   {p.data.name}
@@ -22,12 +25,7 @@ const projects = await getSortedProjects();
               ) : (
                 <span class="project-name">{p.data.name}</span>
               )}
-            </div>
-            <p class="project-desc">{p.data.description}</p>
-            <div class="project-stack">
-              <div class="project-langs">
-                {p.data.stack.map((s) => <span>{s}</span>)}
-              </div>
+              <p class="project-desc">{p.data.description}</p>
             </div>
           </div>
         );
@@ -46,31 +44,61 @@ const projects = await getSortedProjects();
 </script>
 
 <style>
-  .project-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
+  /*
+   * Rows mirror the writing list: meta in the shared rail, serif content
+   * beside it. Rules mark rows that are links; the CV's rows are not, and
+   * stay unruled.
+   */
+  .project-list { display: flex; flex-direction: column; }
+
+  .project-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--rail) 1fr;
+    gap: 0 1.25rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
   }
 
-  .project-item { display: block; position: relative; }
+  .project-item:first-child { border-top: 1px solid var(--border); }
 
   .project-item[hidden] { display: none; }
 
+  /* Stretches the name link over the whole row. */
   .project-link::after {
     content: '';
     position: absolute;
     inset: 0;
   }
 
-  .project-head {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    margin-bottom: 0.3rem;
+  .project-item:hover .project-link { color: var(--accent); }
+
+  .project-stack {
+    list-style: none;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+    padding-top: 0.2rem;
+    line-height: 1.4;
+  }
+
+  .project-name {
+    display: block;
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
+    transition: color 0.1s;
+  }
+
+  .project-desc {
+    font-size: 0.825rem;
+    color: var(--muted);
+    line-height: 1.5;
+    max-width: 38rem;
   }
 
   .project-more {
-    margin-top: 1.75rem;
+    margin-top: 1rem;
     font-family: var(--mono);
     font-size: 0.72rem;
     color: var(--faint);
@@ -83,31 +111,19 @@ const projects = await getSortedProjects();
 
   .project-more:hover { color: var(--text); }
 
-  .project-name {
-    font-size: 0.95rem;
-    font-weight: 600;
-    transition: color 0.1s;
+  /* Phone: one column, stack drops below the description as a single line. */
+  @media (max-width: 640px) {
+    .project-item {
+      grid-template-columns: 1fr;
+      gap: 0.3rem 0;
+    }
+
+    .project-stack {
+      order: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 0.75rem;
+      padding-top: 0;
+    }
   }
-
-  .project-link:hover { color: var(--accent); }
-
-  .project-desc {
-    font-size: 0.875rem;
-    color: var(--muted);
-    line-height: 1.55;
-    margin-bottom: 0.45rem;
-    max-width: 38rem;
-  }
-
-  .project-stack {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.75rem;
-    font-family: var(--mono);
-    font-size: 0.67rem;
-    color: var(--faint);
-  }
-
-  .project-langs span + span::before { content: ' · '; }
 </style>
