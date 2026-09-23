@@ -5,7 +5,7 @@ import Sidebar from '../components/home/Sidebar.astro';
 import Projects from '../components/home/Projects.astro';
 import Writing from '../components/home/Writing.astro';
 import Cv from '../components/home/Cv.astro';
-import { site, socialGroups } from '../config';
+import { site, links } from '../config';
 
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -13,7 +13,7 @@ const jsonLd = JSON.stringify({
   name: site.name,
   jobTitle: site.role,
   url: Astro.site?.href,
-  sameAs: socialGroups.flat().map((link) => link.href).filter((href) => href.startsWith('http')),
+  sameAs: links.map((link) => link.href).filter((href) => href.startsWith('http')),
 });
 ---
 

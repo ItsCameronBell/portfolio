@@ -5,10 +5,7 @@ const posts = await getSortedPosts();
 ---
 
 <section>
-  <div class="section-head-row">
-    <h2 class="section-head">Writing</h2>
-    <a class="section-link" href="/rss.xml">rss</a>
-  </div>
+  <h2 class="section-head">Writing</h2>
   {posts.length === 0 ? (
     <p class="empty">Nothing here yet.</p>
   ) : (
