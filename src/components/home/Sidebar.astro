@@ -85,10 +85,6 @@ const year = new Date().getFullYear();
     display: flex;
     gap: 1rem;
     line-height: 0;
-    margin-top: auto; /* pins links + note + copyright to the bottom of the column */
-    margin-bottom: 1rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
   }
 
   /* The padding/margin pair grows the tap target to 24px without moving the icon. */
@@ -111,8 +107,9 @@ const year = new Date().getFullYear();
     line-height: 1.55;
   }
 
+  /* Pins the note and copyright to the bottom of the column; the icons stay up with the bio. */
   .sidebar-note {
-    margin-top: 0.85rem;
+    margin-top: auto;
     text-wrap: balance;
   }
 
@@ -129,12 +126,8 @@ const year = new Date().getFullYear();
     .brand { padding-top: 2rem; }
 
     .sidebar-links {
-      margin-top: 0;
-      padding-top: 0;
-      border-top: none;
       border-bottom: 1px solid var(--border);
       padding-bottom: 1.5rem;
-      margin-bottom: 0;
     }
 
     .sidebar-note {
