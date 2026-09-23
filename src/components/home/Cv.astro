@@ -20,7 +20,9 @@ const compensation = await getCompensation();
           <span class="cv-date">{formatRange(exp.data.start, exp.data.end)}</span>
           <div class="cv-body">
             {exp.data.url ? (
-              <a class="cv-org" href={exp.data.url} target="_blank" rel="noopener noreferrer">{exp.data.company}</a>
+              <a class="cv-org" href={exp.data.url} target="_blank" rel="noopener noreferrer">
+                {exp.data.company}<span class="cv-arrow" aria-hidden="true">↗</span>
+              </a>
             ) : (
               <span class="cv-org">{exp.data.company}</span>
             )}
@@ -51,7 +53,9 @@ const compensation = await getCompensation();
           <div class="edu-body">
             <div class="edu-degree">{edu.data.degree}</div>
             {edu.data.url ? (
-              <a class="edu-org" href={edu.data.url} target="_blank" rel="noopener noreferrer">{edu.data.institution}</a>
+              <a class="edu-org" href={edu.data.url} target="_blank" rel="noopener noreferrer">
+                {edu.data.institution}<span class="cv-arrow" aria-hidden="true">↗</span>
+              </a>
             ) : (
               <span class="edu-org">{edu.data.institution}</span>
             )}
@@ -121,10 +125,21 @@ const compensation = await getCompensation();
     margin-bottom: 0.2rem;
   }
 
-  a.cv-org:hover {
-    text-decoration: underline;
-    text-underline-offset: 2px;
+  /* Only entries with a url get the arrow; a plain name means there is no site to visit. */
+  .cv-arrow {
+    position: relative;
+    top: -0.3em; /* the mono glyph sits on the baseline; lift it toward cap height */
+    margin-left: 0.25em;
+    font-family: var(--mono);
+    font-size: 0.8em;
+    color: var(--faint);
+    transition: color 0.1s;
   }
+
+  a.cv-org { transition: color 0.1s; }
+
+  a.cv-org:hover,
+  a.cv-org:hover .cv-arrow { color: var(--accent); }
 
   .cv-roles {
     display: flex;
@@ -188,10 +203,10 @@ const compensation = await getCompensation();
     line-height: 1.5;
   }
 
-  a.edu-org:hover {
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
+  a.edu-org { transition: color 0.1s; }
+
+  a.edu-org:hover,
+  a.edu-org:hover .cv-arrow { color: var(--accent); }
 
   .comp-scroll {
     overflow-x: auto;
