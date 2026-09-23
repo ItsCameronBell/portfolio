@@ -1,5 +1,6 @@
 ---
 import { getSortedExperience, getSortedEducation, getCompensation, formatRange } from '../../lib/cv';
+import { tenureMonths, formatTenure } from '../../lib/tenure';
 
 const experience = await getSortedExperience();
 const education = await getSortedEducation();
@@ -17,7 +18,13 @@ const compensation = await getCompensation();
     <div class="cv-list">
       {experience.map((exp) => (
         <div class="cv-item">
-          <span class="cv-date">{formatRange(exp.data.start, exp.data.end)}</span>
+          <div class="cv-date">
+            <span>{formatRange(exp.data.start, exp.data.end)}</span>
+            {/* A current role carries its start so the browser can recount it; see the script below. */}
+            <span class="cv-tenure" data-start={exp.data.end ? undefined : exp.data.start}>
+              {formatTenure(tenureMonths(exp.data.start, exp.data.end))}
+            </span>
+          </div>
           <div class="cv-body">
             {exp.data.url ? (
               <a class="cv-org" href={exp.data.url} target="_blank" rel="noopener noreferrer">
@@ -108,6 +115,9 @@ const compensation = await getCompensation();
   }
 
   .cv-date {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
     font-family: var(--mono);
     font-size: 0.7rem;
     color: var(--faint);
@@ -296,5 +306,28 @@ const compensation = await getCompensation();
     .edu-date { padding-top: 0; }
 
     .cv-role-entry { flex-wrap: wrap; gap: 0.35rem; }
+
+    /* Stacked rows have no rail, so range and length share a line. */
+    .cv-date {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0 1rem;
+    }
   }
 </style>
+
+<script>
+  import { tenureMonths, formatTenure } from '../../lib/tenure';
+
+  /*
+   * The site only rebuilds on push, so a current role's build-time length
+   * would drift. Recount it against today's month on each visit.
+   */
+  function refreshTenure() {
+    document.querySelectorAll<HTMLElement>('.cv-tenure[data-start]').forEach((el) => {
+      el.textContent = formatTenure(tenureMonths(el.dataset.start!));
+    });
+  }
+
+  document.addEventListener('astro:page-load', refreshTenure);
+</script>
